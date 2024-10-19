@@ -1,10 +1,15 @@
 {% extends "master.html" %}
 
 {% block content %}
-    <h1>{{ mymember.firstname }} {{ mymember.lastname }}</h1>
+    <h1>{{ firstname }} {{ lastname }}</h1>
 
-    <p>Number of children: {{ mymember.children_num }}</p>
-    <p>Birth date: {{ mymember.birth_date }}</p>
+    <p>Number of children: {{ children_num }}</p>
+    <p>Birth date: {{ birth_date }}</p>
+
+    {% if father and mother%}
+        <h3>Father {{ father|default_if_none:"none"}}</h3>
+        <h3>Mother</h3>
+    {% endif %}
 
     <p>Back to <a href="/members">Members</a></p>
 {% endblock %}
