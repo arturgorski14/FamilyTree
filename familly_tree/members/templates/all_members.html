@@ -12,9 +12,10 @@
 
   <ul>
     {% for x in mymembers %}
-      <li><a href="details/{{ x.id }}">{{ x.firstname }} {{ x.lastname }}</a></li>
+      <li><a href="{% url 'members:details' x.id %}">{{ x.firstname }} {{ x.lastname }}</a></li>
     {% empty %}
       <li>No members</li>
     {% endfor %}
+    <a href="add">Add new member</a>
   </ul>
 {% endblock %}

@@ -20,3 +20,9 @@
 
 ## interactive shell
 - py manage.py shell
+
+## checks for any problems inside a project
+- py manage.py check
+
+## more useful commands
+- https://docs.djangoproject.com/en/5.1/ref/django-admin/

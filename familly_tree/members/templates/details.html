@@ -2,10 +2,17 @@
 
 {% block content %}
     <h1>{{ firstname }} {{ lastname }}</h1>
+    {% if family_lastname != lastname %}
+        <p>Family lastname {{ family_lastname }}</p>
+    {% endif %}
+    <p>Sex: {{ sex }}</p>
+    <p>Birth date: {{ birth_date }}</p>
+    <p>Alive: {{ is_alive }}</p>
+    {% if not is_alive %}
+        <p>Death date: {{ death_date }}</p>
+    {% endif %}
 
     <p>Number of children: {{ children_num }}</p>
-    <p>Birth date: {{ birth_date }}</p>
-
     {% if father and mother%}
         <h3>Father {{ father|default_if_none:"none"}}</h3>
         <h3>Mother</h3>

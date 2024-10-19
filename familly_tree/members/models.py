@@ -8,9 +8,11 @@ class Member(models.Model):
 
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
-    family_lastname = models.CharField(max_length=255, default=lastname)
+    family_lastname = models.CharField(
+        max_length=255, default=lastname
+    )  # TODO: change to family_name, fix default value
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
-    birth_date = models.DateField(null=True)
+    birth_date = models.DateField(null=True)  # TODO: change to birthdate
     is_alive = models.BooleanField(default=True)
     death_date = models.DateField(
         null=True, default=None
@@ -18,3 +20,10 @@ class Member(models.Model):
     children_num = models.IntegerField(null=True, default=0)
     father_id = models.IntegerField(null=True)  # noone knows who was before him
     mother_id = models.IntegerField(null=True)  # noone knows who was before her
+
+    def __str__(self):
+        born = f"born {self.birth_date}" if self.birth_date else ""
+        died = (
+            f"died {self.death_date}" if not self.is_alive and self.death_date else ""
+        )
+        return f"{self.firstname} {self.lastname} {born} {died}"
