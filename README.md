@@ -1,4 +1,4 @@
-Usefull commands
+# Usefull commands
 
 ## create new project
 - django-admin startproject <project_name>
