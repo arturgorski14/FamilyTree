@@ -1,9 +1,9 @@
 {% extends "master.html" %}
 
 {% block content %}
-    <h1>{{ firstname }} {{ lastname }}</h1>
+<h1 xmlns="http://www.w3.org/1999/html">{{ firstname }} {{ lastname }}</h1>
     {% if family_lastname != lastname %}
-        <p>Family lastname {{ family_lastname }}</p>
+        <p>Family name: {{ family_lastname }}</p>
     {% endif %}
     <p>Sex: {{ sex }}</p>
     <p>Birth date: {{ birth_date }}</p>
@@ -13,9 +13,16 @@
     {% endif %}
 
     <p>Number of children: {{ children_num }}</p>
-    {% if father and mother%}
-        <h3>Father {{ father|default_if_none:"none"}}</h3>
-        <h3>Mother</h3>
+    {% if father_id %}
+        <p><a href="/members/details/{{ father_id }}" >Father</a></p>
+    {% else %}
+        <p>Nobody remembers the father</p>
+    {% endif %}
+
+    {% if mother_id %}
+        <p><a href="/members/details/{{ mother_id }}" >Mother</a></p>
+    {% else %}
+        <p>Nobody remembers the mother</p>
     {% endif %}
 
     <p>Back to <a href="/members">Members</a></p>

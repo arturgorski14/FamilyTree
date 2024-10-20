@@ -24,7 +24,10 @@ def details(request, id):
         "sex": member.sex,
         "birth_date": member.birth_date,
         "is_alive": member.is_alive,
+        "death_date": member.death_date,
         "children_num": member.children_num,
+        "father_id": member.father_id,
+        "mother_id": member.mother_id,
     }
     return HttpResponse(template.render(context, request))
 
@@ -32,14 +35,17 @@ def details(request, id):
 def add_new(request):
     if request.POST:
         data: MemberForm = request.POST
+        birthdate = data["birth_date"] if data["birth_date"] else None
         is_alive = True if data["is_alive"] == "on" else False
+        deathdate = data["death_date"] if data["death_date"] else None
         new_member = Member(
             firstname=data["firstname"],
             lastname=data["lastname"],
             family_lastname=data["family_lastname"],
             sex=data["sex"],
-            birth_date=data["birth_date"],
+            birth_date=birthdate,
             is_alive=is_alive,
+            death_date=deathdate,
             children_num=data["children_num"],
         )
         new_member.save()
