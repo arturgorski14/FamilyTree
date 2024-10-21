@@ -1,7 +1,7 @@
 import logging
 
-from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 
 from .forms import MemberForm
 from .models import Member
@@ -15,11 +15,7 @@ def members(request):
 
 
 def details(request, pk: int):
-    try:
-        member = Member.objects.get(id=pk)
-    except Member.DoesNotExist:
-        raise Http404(f"Member {pk=} does not exist")
-
+    member = get_object_or_404(Member, id=pk)
     template = "details.html"
     context = {
         "firstname": member.firstname,
@@ -72,11 +68,7 @@ def add_new(request):
 
 
 def edit(request, pk: int):
-    try:
-        member = Member.objects.get(id=pk)
-    except Member.DoesNotExist:
-        raise Http404(f"Member {pk=} does not exist")
-
+    member = get_object_or_404(Member, id=pk)
     form = MemberForm(instance=member)
     if request.method == "POST":
         form = MemberForm(request.POST, instance=member)
@@ -93,10 +85,7 @@ def edit(request, pk: int):
 
 
 def remove(request, pk: int):
-    try:
-        member = Member.objects.get(id=pk)
-    except Member.DoesNotExist:
-        raise Http404(f"Member {pk=} does not exist")
+    member = get_object_or_404(Member, id=pk)
     member.delete()
     return HttpResponseRedirect("/members")
 
