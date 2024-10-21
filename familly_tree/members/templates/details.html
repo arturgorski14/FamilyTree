@@ -14,13 +14,13 @@
 
     <p>Number of children: {{ member.children_num }}</p>
     {% if member.father_id %}
-        <p><a href="/members/details/{{ member.father_id }}" >Father</a></p>
+        <p><a href="{% url 'members:details' member.father_id %}" >Father</a></p>
     {% else %}
         <p>Nobody remembers the father</p>
     {% endif %}
 
     {% if member.mother_id %}
-        <p><a href="/members/details/{{ member.mother_id }}" >Mother</a></p>
+        <p><a href="{% url 'members:details' member.mother_id %}" >Mother</a></p>
     {% else %}
         <p>Nobody remembers the mother</p>
     {% endif %}
