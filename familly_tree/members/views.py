@@ -1,7 +1,11 @@
+import logging
+from datetime import timezone
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
+from django.views.generic.detail import DetailView
 
 from .forms import MemberForm
 from .models import Member
@@ -14,8 +18,8 @@ def members(request):
     return HttpResponse(template.render(context, request))
 
 
-def details(request, id):
-    member = Member.objects.get(id=id)
+def details(request, pk: int):
+    member = Member.objects.get(id=pk)
     template = loader.get_template("details.html")
     context = {
         "firstname": member.firstname,
@@ -35,17 +39,21 @@ def details(request, id):
 def add_new(request):
     if request.POST:
         data: MemberForm = request.POST
-        birthdate = data["birth_date"] if data["birth_date"] else None
-        is_alive = True if data["is_alive"] == "on" else False
-        deathdate = data["death_date"] if data["death_date"] else None
+        set_is_alive = data["is_alive"] == "on" if "is_alive" in data else True
+        set_birthdate = (
+            data["birth_date"] if "birth_date" in data and data["birth_date"] else None
+        )
+        set_deathdate = (
+            data["death_date"] if "death_date" in data and data["death_date"] else None
+        )
         new_member = Member(
             firstname=data["firstname"],
             lastname=data["lastname"],
             family_lastname=data["family_lastname"],
             sex=data["sex"],
-            birth_date=birthdate,
-            is_alive=is_alive,
-            death_date=deathdate,
+            birth_date=set_birthdate,
+            is_alive=set_is_alive,
+            death_date=set_deathdate,
             children_num=data["children_num"],
         )
         new_member.save()
@@ -54,6 +62,29 @@ def add_new(request):
     form = MemberForm()
     context = {"error_message": "You didn't select a choice.", "form": form}
     return HttpResponse(template.render(context, request))
+
+
+def edit(request, pk: int):
+    member = Member.objects.get(id=pk)
+    form = MemberForm(instance=member)
+    if request.method == "POST":
+        form = MemberForm(request.POST, instance=member)
+        if form.is_valid():
+            form.save()
+            logging.warning("saved")
+            return HttpResponseRedirect(f"/members/details/{pk}")
+
+    template = "edit_member.html"
+    context = {
+        "form": form,
+    }
+    return render(request, template, context)
+
+
+def remove(request, pk: int):
+    member = Member.objects.get(id=pk)
+    member.delete()
+    return HttpResponseRedirect(f"/members")
 
 
 def main(request):
