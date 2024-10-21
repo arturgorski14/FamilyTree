@@ -1,26 +1,26 @@
 {% extends "master.html" %}
 
 {% block content %}
-<h1 xmlns="http://www.w3.org/1999/html">{{ firstname }} {{ lastname }}</h1>
-    {% if family_lastname != lastname %}
-        <p>Family name: {{ family_lastname }}</p>
+<h1 xmlns="http://www.w3.org/1999/html">{{ member.firstname }} {{ member.lastname }}</h1>
+    {% if member.family_lastname != member.lastname %}
+        <p>Family name: {{ member.family_lastname }}</p>
     {% endif %}
-    <p>Sex: {{ sex }}</p>
-    <p>Birth date: {{ birth_date }}</p>
-    <p>Alive: {{ is_alive }}</p>
-    {% if not is_alive %}
-        <p>Death date: {{ death_date }}</p>
+    <p>Sex: {{ member.sex }}</p>
+    <p>Birth date: {{ member.birth_date }}</p>
+    <p>Alive: {{ member.is_alive }}</p>
+    {% if not member.is_alive %}
+        <p>Death date: {{ member.death_date }}</p>
     {% endif %}
 
-    <p>Number of children: {{ children_num }}</p>
-    {% if father_id %}
-        <p><a href="/members/details/{{ father_id }}" >Father</a></p>
+    <p>Number of children: {{ member.children_num }}</p>
+    {% if member.father_id %}
+        <p><a href="/members/details/{{ member.father_id }}" >Father</a></p>
     {% else %}
         <p>Nobody remembers the father</p>
     {% endif %}
 
-    {% if mother_id %}
-        <p><a href="/members/details/{{ mother_id }}" >Mother</a></p>
+    {% if member.mother_id %}
+        <p><a href="/members/details/{{ member.mother_id }}" >Mother</a></p>
     {% else %}
         <p>Nobody remembers the mother</p>
     {% endif %}

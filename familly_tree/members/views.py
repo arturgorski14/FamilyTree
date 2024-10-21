@@ -17,18 +17,7 @@ def members(request):
 def details(request, pk: int):
     member = get_object_or_404(Member, id=pk)
     template = "details.html"
-    context = {
-        "firstname": member.firstname,
-        "lastname": member.lastname,
-        "family_lastname": member.family_lastname,
-        "sex": member.sex,
-        "birth_date": member.birth_date,
-        "is_alive": member.is_alive,
-        "death_date": member.death_date,
-        "children_num": member.children_num,
-        "father_id": member.father_id,
-        "mother_id": member.mother_id,
-    }
+    context = {"member": member}
     return render(request, template, context)
 
 
