@@ -41,7 +41,9 @@ class Migration(migrations.Migration):
             model_name="member",
             name="sex",
             field=models.CharField(
-                choices=[("m", "Male"), ("f", "Female")], default="m", max_length=1
+                choices=[("m", "Male"), ("f", "Female")],
+                default="m",
+                max_length=1,  # noqa E501
             ),
         ),
         migrations.AlterField(
