@@ -8,11 +8,12 @@ from .forms import MemberForm
 from .models import Member
 
 
-def members(request):
-    template = "all_members.html"
-    all_members = Member.objects.all().values()
-    context = {"mymembers": all_members}
-    return render(request, template, context)
+class AllMembers(generic.ListView):
+    template_name = "all_members.html"
+    context_object_name = "mymembers"
+
+    def get_queryset(self):
+        return Member.objects.all().values()
 
 
 class Details(generic.DetailView):

@@ -5,7 +5,7 @@ from . import views
 app_name = "members"
 urlpatterns = [
     path("", views.main, name="main"),
-    path(f"{app_name}/", views.members, name="members"),
+    path(f"{app_name}/", views.AllMembers.as_view(), name="members"),
     path(f"{app_name}/<int:pk>", views.Details.as_view(), name="details"),
     path(f"{app_name}/add/", views.add_new, name="add"),
     path(f"{app_name}/edit/<int:pk>", views.edit, name="edit"),
