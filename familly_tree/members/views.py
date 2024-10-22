@@ -3,6 +3,7 @@ import logging
 from django.http import HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404, render
 from django.views import generic, View
+from django.views.generic import CreateView, FormView
 
 from .forms import MemberForm
 from .models import Member
@@ -21,7 +22,12 @@ class Details(generic.DetailView):
     template_name = "details.html"
 
 
-class AddNew(generic.FormView):
+class CreateMember(CreateView):  # TODO: place it inside urls - add data validation
+    model = Member
+    form_class = MemberForm
+
+
+class AddNew(FormView):
     form_class = MemberForm
     template_name = "add_new_member.html"
 
