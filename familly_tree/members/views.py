@@ -2,6 +2,7 @@ import logging
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.views import generic
 
 from .forms import MemberForm
 from .models import Member
@@ -14,11 +15,9 @@ def members(request):
     return render(request, template, context)
 
 
-def details(request, pk: int):
-    member = get_object_or_404(Member, id=pk)
-    template = "details.html"
-    context = {"member": member}
-    return render(request, template, context)
+class Details(generic.DetailView):
+    model = Member
+    template_name = "details.html"
 
 
 def add_new(request):
