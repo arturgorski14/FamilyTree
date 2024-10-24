@@ -26,3 +26,6 @@
 
 ## more useful commands
 - https://docs.djangoproject.com/en/5.1/ref/django-admin/
+
+## pytest has been set up to run tests simply use
+- pytest
