@@ -1,0 +1,6 @@
+<form action="{% url 'members:remove' x.id %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" style="background:none; border:none; color:blue; text-decoration:underline; cursor:pointer;">
+        Delete
+    </button>
+</form>

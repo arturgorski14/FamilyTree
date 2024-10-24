@@ -15,7 +15,7 @@
     <li>
       <a href="{% url 'members:details' x.id %}">{{ x.firstname }} {{ x.lastname }}</a>
       <a href="{% url 'members:edit' x.id %}">Update</a>
-      <a href="{% url 'members:remove' x.id %}">Delete</a>
+      {% include "delete_button.html" %}
     </li>
     {% empty %}
       <li>No members</li>

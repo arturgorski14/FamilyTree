@@ -8,6 +8,6 @@ urlpatterns = [
     path(f"{app_name}/", views.AllMembers.as_view(), name="members"),
     path(f"{app_name}/<int:pk>", views.Details.as_view(), name="details"),
     path(f"{app_name}/add/", views.AddNew.as_view(), name="add"),
-    path(f"{app_name}/edit/<int:pk>", views.edit, name="edit"),
-    path(f"{app_name}/remove/<int:pk>", views.remove, name="remove"),
+    path(f"{app_name}/edit/<int:pk>", views.EditMember.as_view(), name="edit"),
+    path(f"{app_name}/remove/<int:pk>", views.DeleteMember.as_view(), name="remove"),
 ]
