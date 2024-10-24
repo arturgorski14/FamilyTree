@@ -22,18 +22,9 @@ class Details(generic.DetailView):
     template_name = "details.html"
 
 
-class CreateMember(CreateView):  # TODO: place it inside urls - add data validation
-    model = Member
-    form_class = MemberForm
-
-
-class AddNew(FormView):
+class AddNew(CreateView):
     form_class = MemberForm
     template_name = "add_new_member.html"
-
-    def get(self, request, *args, **kwargs):
-        context = {"form": self.form_class()}
-        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -79,6 +70,7 @@ class AddNew(FormView):
         cleaned_data["father_id"] = set_father_id
         cleaned_data["mother_id"] = set_mother_id
         return cleaned_data
+
 
 def edit(request, pk: int):
     member = get_object_or_404(Member, id=pk)
