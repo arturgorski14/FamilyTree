@@ -1,5 +1,5 @@
 """
-URL configuration for familly_tree project.
+URL configuration for family_tree project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
