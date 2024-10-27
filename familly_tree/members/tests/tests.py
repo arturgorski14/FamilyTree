@@ -43,3 +43,36 @@ def test_create_default_member(db):
     for key, value in expected_data.items():
         member_value = getattr(member, key)
         assert member_value == value, f"value for {key=} doesn't match {member_value} != {value}"
+
+
+"""
+Test cases TODO:
+ultimately shouldn't be possible:
+- link father_id/mother_id that doesn't exist
+- link female member as father_id and vice versa
+- negative children_num
+- different sex than m/f
+- birth_date after death_date
+- is_alive=True and has death_date
+
+ultimately should be possible:
+- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
+"""
+
+"""
+Features TODO:
+- linking children
+- linking valid father_id/mother_id, should append children for chosen id
+- linking a child should result in adding father/mother to chosen child
+
+2.0
+- improved front-end (not only list based, but view tree based)
+- CRUD and linking by performing UI operations, not solely based on buttons.
+
+Future
+- authorization.
+- view other user family.
+- add user to family and merge families.
+- possibility to add one photo for each familly member.
+- consider read-model in elasticsearch.
+"""
