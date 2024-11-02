@@ -36,14 +36,28 @@ class Member(models.Model):
         self._validate_father_and_mother()
 
     def save(self, *args, **kwargs):
-        self.clean()  # Call clean to validate fields before saving
+        self.clean()
+        if not self.family_lastname:
+            self.family_lastname = self.lastname
         super().save(*args, **kwargs)
+
+    @property
+    def alive(self):
+        return "No" if self.death_date else "Yes"
 
     @property
     def children(self) -> list["Member"]:
         return Member.objects.filter(
             models.Q(father_id=self.id) | models.Q(mother_id=self.id)
         )
+
+    @property
+    def father(self):
+        return Member.objects.filter(id=self.father_id).first()
+
+    @property
+    def mother(self):
+        return Member.objects.filter(id=self.mother_id).first()
 
     def _validate_sex(self):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):

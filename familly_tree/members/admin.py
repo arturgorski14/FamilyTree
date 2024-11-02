@@ -10,7 +10,7 @@ class MemberAdmin(admin.ModelAdmin):
         "lastname",
         "sex",
         "birth_date",
-        "is_alive",
+        "alive",
     )
 
 

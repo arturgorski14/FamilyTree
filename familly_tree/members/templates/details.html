@@ -12,17 +12,27 @@
         <p>Death date: {{ member.death_date }}</p>
     {% endif %}
 
-    <p>Number of children: {{ member.children_num }}</p>
+    <p>Children:</p>
+    <ul>
+        {% if member.children %}
+            {% for child in member.children %}
+                <li><a href="{% url 'members:details' child.id %}">{{ child.firstname }} {{ child.lastname }}</a></li>
+            {% endfor %}
+        {% else %}
+            <li>Doesn't have any.</li>
+        {% endif %}
+    </ul>
+
     {% if member.father_id %}
-        <p><a href="{% url 'members:details' member.father_id %}" >Father</a></p>
+        <p>Father: <a href="{% url 'members:details' member.father_id %}" >father_data</a></p>
     {% else %}
-        <p>Nobody remembers the father</p>
+        <p>Father: Nobody remembers the father</p>
     {% endif %}
 
     {% if member.mother_id %}
-        <p><a href="{% url 'members:details' member.mother_id %}" >Mother</a></p>
+        <p>Mother: <a href="{% url 'members:details' member.mother_id %}" >mother_data</a></p>
     {% else %}
-        <p>Nobody remembers the mother</p>
+        <p>Mother: Nobody remembers the mother</p>
     {% endif %}
 
     {% include "edit_button.html" %}

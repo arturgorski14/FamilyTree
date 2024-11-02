@@ -11,10 +11,10 @@ class MemberFactory(factory.Factory):
     class Meta:
         model = Member
 
-    firstname = "John"
-    lastname = "Doe"
-    family_lastname = "Doe"
-    sex = "m"
+    firstname = factory.Faker("first_name")
+    lastname = factory.Faker("last_name")
+    family_lastname = factory.LazyAttribute(lambda obj: obj.lastname)
+    sex = factory.Iterator([Member.Sex.MALE, Member.Sex.FEMALE])
     birth_date = None
     is_alive = True
     death_date = None
@@ -35,7 +35,7 @@ def test_create_default_member(db):
         "mother_id": None,
     }
 
-    member: Member = MemberFactory()
+    member: Member = MemberFactory(firstname="John", lastname="Doe", sex="m")
 
     for key, value in expected_data.items():
         member_value = getattr(member, key)
@@ -174,6 +174,71 @@ def test_member_children(db, sex, field):
     assert set(children) == {child1, child2}
     assert children.count() == 2
 
+
+def test_family_lastname_defaults_to_lastname(db):
+    member = MemberFactory(lastname="Smith", family_lastname="")
+    member.save()
+
+    assert member.family_lastname == "Smith"
+
+
+def test_family_lastname_explicitly_set(db):
+    member = MemberFactory(lastname="Smith", family_lastname="Johnson")
+    member.save()
+
+    assert member.family_lastname == "Johnson"
+
+
+def test_member_father(db):
+    father = MemberFactory(firstname="John", lastname="Doe", sex="m")
+    father.save()
+    child = MemberFactory(firstname="Jane", lastname="Doe", father_id=father.id)
+    child.save()
+
+    assert child.father == father
+    assert child.father.firstname == "John"
+    assert child.father.lastname == "Doe"
+
+
+def test_member_mother(db):
+    mother = MemberFactory(firstname="Jane", lastname="Smith", sex="f")
+    mother.save()
+    child = MemberFactory(firstname="John", lastname="Smith", mother_id=mother.id)
+    child.save()
+
+    assert child.mother == mother
+    assert child.mother.firstname == "Jane"
+    assert child.mother.lastname == "Smith"
+
+
+def test_member_father_not_set(db):
+    child = MemberFactory(firstname="Jane", lastname="Doe", father_id=None)
+    child.save()
+
+    assert child.father is None
+
+
+def test_member_mother_not_set(db):
+    child = MemberFactory(firstname="John", lastname="Doe", mother_id=None)
+    child.save()
+
+    assert child.mother is None
+
+
+def test_member_alive(db):
+    member = MemberFactory(death_date=None)
+    member.save()
+
+    assert member.alive == "Yes"
+
+
+def test_member_is_alive(db):
+    member = MemberFactory(is_alive=False, death_date="2000-01-01")
+    member.save()
+
+    assert member.alive == "No"
+
+
 """
 TODO:
 ultimately should be possible:
@@ -182,10 +247,6 @@ ultimately should be possible:
 
 """
 Features TODO:
-- linking children
-- linking valid father_id/mother_id, should append children for chosen id
-- linking a child should result in adding father/mother to chosen child
-
 2.0
 - improved front-end (not only list based, but view tree based)
 - CRUD and linking by performing UI operations, not solely based on buttons.
