@@ -18,7 +18,6 @@ class MemberFactory(factory.Factory):
     birth_date = None
     is_alive = True
     death_date = None
-    children_num = 0
     father_id = None
     mother_id = None
 
@@ -32,7 +31,6 @@ def test_create_default_member(db):
         "birth_date": None,
         "is_alive": True,
         "death_date": None,
-        "children_num": 0,
         "father_id": None,
         "mother_id": None,
     }
@@ -90,12 +88,6 @@ def test_male_as_mother(db):
         member.clean()
 
 
-def test_negative_children_num(db):
-    with pytest.raises(ValidationError, match="Children number cannot be negative"):
-        member = MemberFactory.build(children_num=-1)
-        member.clean()
-
-
 def test_invalid_sex(db):
     with pytest.raises(
         ValidationError, match="Diversity not supported. Sex must be 'm' or 'f'"
@@ -132,7 +124,6 @@ def test_member_cannot_be_own_father(db):
         "sex": member.sex,
         "birth_date": member.birth_date,
         "is_alive": member.is_alive,
-        "children_num": member.children_num,
     }
 
     form = MemberForm(data, instance=member)
@@ -153,7 +144,6 @@ def test_member_cannot_be_own_mother(db):
         "sex": member.sex,
         "birth_date": member.birth_date,
         "is_alive": member.is_alive,
-        "children_num": member.children_num,
     }
 
     form = MemberForm(data, instance=member)
@@ -184,18 +174,8 @@ def test_member_children(db, sex, field):
     assert set(children) == {child1, child2}
     assert children.count() == 2
 
-
 """
-Test cases TODO:
-ultimately shouldn't be possible:
-- link father_id/mother_id that doesn't exist
-- link female member as father_id and vice versa
-- negative children_num
-- different sex than m/f
-- birth_date after death_date
-- is_alive=True and has death_date
-- set itself as father_id or mother_id
-
+TODO:
 ultimately should be possible:
 - birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
 """

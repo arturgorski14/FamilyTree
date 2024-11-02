@@ -11,7 +11,6 @@ class MemberAdmin(admin.ModelAdmin):
         "sex",
         "birth_date",
         "is_alive",
-        "children_num",
     )
 
 

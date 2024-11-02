@@ -10,23 +10,14 @@ class Member(models.Model):
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
     family_lastname = models.CharField(
-        max_length=255, default=lastname
+        max_length=255, blank=True
     )  # TODO: change to family_name, fix default value
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
-    birth_date = models.DateField(
-        null=True, blank=True
-    )  # TODO: change to birthdate  # noqa E501
+    birth_date = models.DateField(null=True, blank=True)
     is_alive = models.BooleanField(default=True)
-    death_date = models.DateField(
-        null=True, default=None, blank=True
-    )  # only show's up when is_alive is False
-    children_num = models.IntegerField(default=0)
-    father_id = models.IntegerField(
-        null=True, blank=True
-    )  # noone knows who was before him
-    mother_id = models.IntegerField(
-        null=True, blank=True
-    )  # noone knows who was before her
+    death_date = models.DateField(null=True, default=None, blank=True)
+    father_id = models.IntegerField(null=True, blank=True)
+    mother_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         born = f"born {self.birth_date}" if self.birth_date else ""
@@ -40,7 +31,6 @@ class Member(models.Model):
     def clean(self):
         super().clean()
         self._validate_sex()
-        self._validate_children_num_is_not_negative()
         self._validate_is_alive_with_death_date()
         self._validate_if_birthdate_is_before_death_date()
         self._validate_father_and_mother()
@@ -58,10 +48,6 @@ class Member(models.Model):
     def _validate_sex(self):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
             raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
-
-    def _validate_children_num_is_not_negative(self):
-        if self.children_num < 0:
-            raise ValidationError("Children number cannot be negative")
 
     def _validate_is_alive_with_death_date(self):
         if self.is_alive and self.death_date:
