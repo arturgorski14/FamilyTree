@@ -14,7 +14,6 @@ class Member(models.Model):
     )  # TODO: change to family_name, fix default value
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
     birth_date = models.DateField(null=True, blank=True)
-    is_alive = models.BooleanField(default=True)
     death_date = models.DateField(null=True, default=None, blank=True)
     father_id = models.IntegerField(null=True, blank=True)
     mother_id = models.IntegerField(null=True, blank=True)
