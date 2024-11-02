@@ -42,8 +42,8 @@ class Member(models.Model):
         super().save(*args, **kwargs)
 
     @property
-    def alive(self):
-        return "No" if self.death_date else "Yes"
+    def alive(self) -> str:
+        return "Yes" if self.death_date is None else "No"
 
     @property
     def children(self) -> list["Member"]:
@@ -52,11 +52,11 @@ class Member(models.Model):
         )
 
     @property
-    def father(self):
+    def father(self) -> "Member":
         return Member.objects.filter(id=self.father_id).first()
 
     @property
-    def mother(self):
+    def mother(self) -> "Member":
         return Member.objects.filter(id=self.mother_id).first()
 
     def _validate_sex(self):

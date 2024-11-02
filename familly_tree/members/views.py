@@ -11,7 +11,7 @@ class AllMembers(generic.ListView):
     context_object_name = "all_members"
 
     def get_queryset(self):
-        return Member.objects.all().values()
+        return Member.objects.all()
 
 
 class Details(generic.DetailView):

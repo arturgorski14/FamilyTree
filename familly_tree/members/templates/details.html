@@ -7,8 +7,8 @@
     {% endif %}
     <p>Sex: {{ member.sex }}</p>
     <p>Birth date: {{ member.birth_date }}</p>
-    <p>Alive: {{ member.is_alive }}</p>
-    {% if not member.is_alive %}
+    <p>Alive: {{ member.alive }}</p>
+    {% if not member.alive %}
         <p>Death date: {{ member.death_date }}</p>
     {% endif %}
 

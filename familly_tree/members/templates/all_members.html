@@ -3,6 +3,7 @@
 <table class="members-table">
   <thead>
     <tr>
+      <th>Id</th>
       <th>Name</th>
       <th>Sex</th>
       <th>Alive?</th>
@@ -11,7 +12,10 @@
   </thead>
   <tbody>
     {% for member in all_members %}
-    <tr class="{% if member.is_alive %}member-alive{% else %}member-dead{% endif %}">
+    <tr class="{% if member.alive == 'Yes' %}member-alive{% else %}member-dead{% endif %}">
+      <td>
+        {{ member.id }}
+      </td>
       <td>
         <a href="{% url 'members:details' member.id %}">
           {{ member.firstname }} {{ member.lastname }}
@@ -25,11 +29,7 @@
         {% endif %}
       </td>
       <td>
-        {% if member.alive %}
-          Yes
-        {% else %}
-          No
-        {% endif %}
+        {{ member.alive }}
       </td>
       <td class="actions">
         {% include "edit_button.html" %}
