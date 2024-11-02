@@ -42,10 +42,6 @@ def test_create_default_member(db):
         ), f"Expected {key} to be {value}, but got {member_value}"
 
 
-def test_set_family_name_as_lastname(db):
-    """If family lastname haven't been passed, set it to member lastname"""
-
-
 def test_link_non_existent_father_id(db):
     with pytest.raises(
         ValidationError,
