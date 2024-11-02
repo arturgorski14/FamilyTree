@@ -16,7 +16,6 @@ class MemberFactory(factory.Factory):
     family_lastname = factory.LazyAttribute(lambda obj: obj.lastname)
     sex = factory.Iterator([Member.Sex.MALE, Member.Sex.FEMALE])
     birth_date = None
-    is_alive = True
     death_date = None
     father_id = None
     mother_id = None
@@ -29,7 +28,6 @@ def test_create_default_member(db):
         "family_lastname": "Doe",
         "sex": "m",
         "birth_date": None,
-        "is_alive": True,
         "death_date": None,
         "father_id": None,
         "mother_id": None,
@@ -89,26 +87,20 @@ def test_male_as_mother(db):
 
 
 def test_invalid_sex(db):
+    member = MemberFactory.build(sex="x")
+
     with pytest.raises(
         ValidationError, match="Diversity not supported. Sex must be 'm' or 'f'"
     ):
-        member = MemberFactory.build(sex="x")
         member.clean()
 
 
 def test_birth_after_death(db):
+    member = MemberFactory.build(
+        birth_date="2000-01-01", death_date="1999-01-01"
+    )
+
     with pytest.raises(ValidationError, match="Birth date must be before death date"):
-        member = MemberFactory.build(
-            birth_date="2000-01-01", is_alive=False, death_date="1999-01-01"
-        )
-        member.clean()
-
-
-def test_is_alive_with_death_date(db):
-    with pytest.raises(
-        ValidationError, match="Living members cannot have a death date"
-    ):
-        member = MemberFactory.build(is_alive=True, death_date="2000-01-01")
         member.clean()
 
 
@@ -123,7 +115,6 @@ def test_member_cannot_be_own_father(db):
         "mother_id": member.mother_id,
         "sex": member.sex,
         "birth_date": member.birth_date,
-        "is_alive": member.is_alive,
     }
 
     form = MemberForm(data, instance=member)
@@ -143,7 +134,6 @@ def test_member_cannot_be_own_mother(db):
         "mother_id": member.id,
         "sex": member.sex,
         "birth_date": member.birth_date,
-        "is_alive": member.is_alive,
     }
 
     form = MemberForm(data, instance=member)
@@ -232,11 +222,13 @@ def test_member_alive(db):
     assert member.alive == "Yes"
 
 
-def test_member_is_alive(db):
-    member = MemberFactory(is_alive=False, death_date="2000-01-01")
+def test_member_not_alive(db):
+    death_date = "2000-01-01"
+    member = MemberFactory(death_date=death_date)
     member.save()
 
     assert member.alive == "No"
+    assert member.death_date == death_date
 
 
 """
