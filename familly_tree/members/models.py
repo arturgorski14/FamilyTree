@@ -23,7 +23,7 @@ class Member(models.Model):
         born = f"born {self.birth_date}" if self.birth_date else ""
         died = (
             f"died {self.death_date}"
-            if not self.is_alive and self.death_date
+            if self.death_date
             else ""  # noqa E501
         )
         return f"{self.firstname} {self.lastname} {born} {died}"
@@ -31,7 +31,6 @@ class Member(models.Model):
     def clean(self):
         super().clean()
         self._validate_sex()
-        self._validate_is_alive_with_death_date()
         self._validate_if_birthdate_is_before_death_date()
         self._validate_father_and_mother()
 
@@ -62,10 +61,6 @@ class Member(models.Model):
     def _validate_sex(self):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
             raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
-
-    def _validate_is_alive_with_death_date(self):
-        if self.is_alive and self.death_date:
-            raise ValidationError("Living members cannot have a death date")
 
     def _validate_if_birthdate_is_before_death_date(self):
         if not self.birth_date or not self.death_date:
