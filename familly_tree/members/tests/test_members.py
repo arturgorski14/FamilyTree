@@ -13,7 +13,7 @@ class MemberFactory(factory.Factory):
 
     firstname = factory.Faker("first_name")
     lastname = factory.Faker("last_name")
-    family_lastname = factory.LazyAttribute(lambda obj: obj.lastname)
+    family_name = factory.LazyAttribute(lambda obj: obj.lastname)
     sex = factory.Iterator([Member.Sex.MALE, Member.Sex.FEMALE])
     birth_date = None
     death_date = None
@@ -25,7 +25,7 @@ def test_create_default_member(db):
     expected_data = {
         "firstname": "John",
         "lastname": "Doe",
-        "family_lastname": "Doe",
+        "family_name": "Doe",
         "sex": "m",
         "birth_date": None,
         "death_date": None,
@@ -42,7 +42,7 @@ def test_create_default_member(db):
         ), f"Expected {key} to be {value}, but got {member_value}"
 
 
-def test_set_family_lastname_as_lastname(db):
+def test_set_family_name_as_lastname(db):
     """If family lastname haven't been passed, set it to member lastname"""
 
 
@@ -110,7 +110,7 @@ def test_member_cannot_be_own_father(db):
     data = {
         "firstname": member.firstname,
         "lastname": member.lastname,
-        "family_lastname": member.family_lastname,
+        "family_name": member.family_name,
         "father_id": member.id,
         "mother_id": member.mother_id,
         "sex": member.sex,
@@ -129,7 +129,7 @@ def test_member_cannot_be_own_mother(db):
     data = {
         "firstname": member.firstname,
         "lastname": member.lastname,
-        "family_lastname": member.family_lastname,
+        "family_name": member.family_name,
         "father_id": member.father_id,
         "mother_id": member.id,
         "sex": member.sex,
@@ -165,51 +165,53 @@ def test_member_children(db, sex, field):
     assert children.count() == 2
 
 
-def test_family_lastname_defaults_to_lastname(db):
-    member = MemberFactory(lastname="Smith", family_lastname="")
+def test_family_name_defaults_to_lastname(db):
+    member = MemberFactory(lastname="Smith", family_name=None)
     member.save()
 
-    assert member.family_lastname == "Smith"
+    assert member.family_name == "Smith"
 
 
-def test_family_lastname_explicitly_set(db):
-    member = MemberFactory(lastname="Smith", family_lastname="Johnson")
+def test_family_name_explicitly_set(db):
+    member = MemberFactory(lastname="Smith", family_name="Johnson")
     member.save()
 
-    assert member.family_lastname == "Johnson"
+    assert member.family_name == "Johnson"
 
 
 def test_member_father(db):
     father = MemberFactory(firstname="John", lastname="Doe", sex="m")
     father.save()
-    child = MemberFactory(firstname="Jane", lastname="Doe", father_id=father.id)
+    child = MemberFactory(father_id=father.id)
     child.save()
 
     assert child.father == father
     assert child.father.firstname == "John"
     assert child.father.lastname == "Doe"
+    assert father.children.count() == 1
 
 
 def test_member_mother(db):
     mother = MemberFactory(firstname="Jane", lastname="Smith", sex="f")
     mother.save()
-    child = MemberFactory(firstname="John", lastname="Smith", mother_id=mother.id)
+    child = MemberFactory(mother_id=mother.id)
     child.save()
 
     assert child.mother == mother
     assert child.mother.firstname == "Jane"
     assert child.mother.lastname == "Smith"
+    assert mother.children.count() == 1
 
 
 def test_member_father_not_set(db):
-    child = MemberFactory(firstname="Jane", lastname="Doe", father_id=None)
+    child = MemberFactory(father_id=None)
     child.save()
 
     assert child.father is None
 
 
 def test_member_mother_not_set(db):
-    child = MemberFactory(firstname="John", lastname="Doe", mother_id=None)
+    child = MemberFactory(mother_id=None)
     child.save()
 
     assert child.mother is None

@@ -9,9 +9,9 @@ class Member(models.Model):
 
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
-    family_lastname = models.CharField(
+    family_name = models.CharField(
         max_length=255, blank=True
-    )  # TODO: change to family_name, fix default value
+    )
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
     birth_date = models.DateField(null=True, blank=True)
     death_date = models.DateField(null=True, default=None, blank=True)
@@ -35,8 +35,8 @@ class Member(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean()
-        if not self.family_lastname:
-            self.family_lastname = self.lastname
+        if not self.family_name:
+            self.family_name = self.lastname
         super().save(*args, **kwargs)
 
     @property
