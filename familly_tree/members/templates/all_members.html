@@ -11,29 +11,29 @@
     </tr>
   </thead>
   <tbody>
-    {% for x in all_members %}
-    <tr class="{% if x.is_alive %}member-alive{% else %}member-dead{% endif %}">
+    {% for member in all_members %}
+    <tr class="{% if member.is_alive %}member-alive{% else %}member-dead{% endif %}">
       <td>
-        <a href="{% url 'members:details' x.id %}">
-          {{ x.firstname }} {{ x.lastname }}
+        <a href="{% url 'members:details' member.id %}">
+          {{ member.firstname }} {{ member.lastname }}
         </a>
       </td>
       <td>
-        {% if x.sex == 'm' %}
+        {% if member.sex == 'm' %}
           Male
         {% else %}
           Female
         {% endif %}
       </td>
       <td>
-        {% if x.is_alive %}
+        {% if member.is_alive %}
           Yes
         {% else %}
           No
         {% endif %}
       </td>
       <td class="actions">
-        <a href="{% url 'members:edit' x.id %}" class="btn">Update</a>
+        <a href="{% url 'members:edit' member.id %}" class="btn">Update</a>
         {% include "delete_button.html" %}
       </td>
     </tr>

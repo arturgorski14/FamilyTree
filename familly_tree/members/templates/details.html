@@ -25,5 +25,6 @@
         <p>Nobody remembers the mother</p>
     {% endif %}
 
+    <a href="{% url 'members:edit' member.id %}" class="btn">Update</a>
     <p>Back to <a href="/members">Members</a></p>
 {% endblock %}

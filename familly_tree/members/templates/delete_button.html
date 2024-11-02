@@ -1,4 +1,4 @@
-<form action="{% url 'members:remove' x.id %}" method="post">
+<form action="{% url 'members:remove' member.id %}" method="post">
     {% csrf_token %}
     <button type="submit" class="btn-delete">
         Delete
