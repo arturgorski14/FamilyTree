@@ -162,6 +162,29 @@ def test_member_cannot_be_own_mother(db):
     assert "A member cannot be their own mother" in form.errors["__all__"][0]
 
 
+@pytest.mark.parametrize(
+    "sex, field",
+    [
+        ("m", "father_id"),
+        ("f", "mother_id"),
+    ],
+)
+def test_member_children(db, sex, field):
+    parent = MemberFactory.build(sex=sex)
+    parent.save()
+
+    data = {field: parent.id}
+    child1 = MemberFactory.build(**data)
+    child1.save()
+    child2 = MemberFactory.build(**data)
+    child2.save()
+
+    children = parent.children
+
+    assert set(children) == {child1, child2}
+    assert children.count() == 2
+
+
 """
 Test cases TODO:
 ultimately shouldn't be possible:

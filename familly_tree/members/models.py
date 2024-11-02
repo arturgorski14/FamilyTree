@@ -49,6 +49,12 @@ class Member(models.Model):
         self.clean()  # Call clean to validate fields before saving
         super().save(*args, **kwargs)
 
+    @property
+    def children(self) -> list["Member"]:
+        return Member.objects.filter(
+            models.Q(father_id=self.id) | models.Q(mother_id=self.id)
+        )
+
     def _validate_sex(self):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
             raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
