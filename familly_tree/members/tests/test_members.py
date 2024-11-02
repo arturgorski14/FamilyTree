@@ -55,7 +55,7 @@ def test_link_non_existent_father_id(db):
         ValidationError,
         match="Non-existent or invalid father: Father must exist and be male.",
     ):
-        member = MemberFactory.build(father_id=999)  # Assuming 999 does not exist
+        member = MemberFactory.build(father_id=999)
         member.clean()
 
 
@@ -64,7 +64,7 @@ def test_link_non_existent_mother_id(db):
         ValidationError,
         match="Non-existent or invalid mother: Mother must exist and be female.",
     ):
-        member = MemberFactory.build(mother_id=999)  # Assuming 999 does not exist
+        member = MemberFactory.build(mother_id=999)
         member.clean()
 
 
