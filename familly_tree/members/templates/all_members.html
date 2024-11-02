@@ -1,6 +1,5 @@
 <h1>Members</h1>
 
-<!-- Styled as a table -->
 <table class="members-table">
   <thead>
     <tr>
@@ -33,7 +32,7 @@
         {% endif %}
       </td>
       <td class="actions">
-        <a href="{% url 'members:edit' member.id %}" class="btn">Update</a>
+        {% include "edit_button.html" %}
         {% include "delete_button.html" %}
       </td>
     </tr>
@@ -45,18 +44,15 @@
   </tbody>
 </table>
 
-<!-- Add new member link styled as a button -->
-<a href="{% url 'members:add' %}" class="btn btn-add">Add New Member</a>
+{% include "add_button.html" %}
 
-<!-- Style -->
 <style>
-
   .members-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
   }
-  
+
   .members-table th, .members-table td {
     padding: 12px 15px;
     text-align: left;
@@ -74,34 +70,5 @@
   .actions {
     display: flex;
     gap: 10px;
-  }
-
-  .btn {
-    padding: 6px 12px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  .btn:hover {
-    background-color: #0056b3;
-  }
-
-  .btn-add {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-
-  .btn-add:hover {
-    background-color: #218838;
   }
 </style>
