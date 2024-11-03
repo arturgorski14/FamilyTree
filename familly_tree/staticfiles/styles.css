@@ -1,0 +1,58 @@
+body {
+  background-color: #1a1a1a;
+  font-family: verdana;
+}
+
+  .btn {
+    padding: 6px 12px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-add {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  .btn-add:hover {
+    background-color: #218838;
+  }
+
+    .members-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .members-table th, .members-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .member-alive {
+    background-color: #cce3de
+  }
+
+  .member-dead {
+    background-color: grey
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
