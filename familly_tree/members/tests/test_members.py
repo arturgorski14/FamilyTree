@@ -1,3 +1,6 @@
+import time
+import unittest.mock
+
 import factory
 import pytest
 from django.core.exceptions import ValidationError
@@ -92,9 +95,7 @@ def test_invalid_sex(db):
 
 
 def test_birth_after_death(db):
-    member = MemberFactory.build(
-        birth_date="2000-01-01", death_date="1999-01-01"
-    )
+    member = MemberFactory.build(birth_date="2000-01-01", death_date="1999-01-01")
 
     with pytest.raises(ValidationError, match="Birth date must be before death date"):
         member.clean()
@@ -230,18 +231,13 @@ def test_member_not_alive(db):
 
 
 """
-TODO:
-ultimately should be possible:
-- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
-"""
-
-"""
 Features TODO:
 2.0
 - improved front-end (not only list based, but view tree based)
 - CRUD and linking by performing UI operations, not solely based on buttons.
 
 Future
+- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
 - authorization.
 - view other user family.
 - add user to family and merge families.

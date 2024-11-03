@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -9,9 +11,7 @@ class Member(models.Model):
 
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
-    family_name = models.CharField(
-        max_length=255, blank=True
-    )
+    family_name = models.CharField(max_length=255, blank=True)
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
     birth_date = models.DateField(null=True, blank=True)
     death_date = models.DateField(null=True, default=None, blank=True)
@@ -19,12 +19,11 @@ class Member(models.Model):
     mother_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
+        return f"{self.firstname} {self.lastname}"
+
+    def __repr__(self):
         born = f"born {self.birth_date}" if self.birth_date else ""
-        died = (
-            f"died {self.death_date}"
-            if self.death_date
-            else ""  # noqa E501
-        )
+        died = f"died {self.death_date}" if self.death_date else ""  # noqa E501
         return f"{self.firstname} {self.lastname} {born} {died}"
 
     def clean(self):
@@ -56,6 +55,24 @@ class Member(models.Model):
     @property
     def mother(self) -> "Member":
         return Member.objects.filter(id=self.mother_id).first()
+
+    @property
+    def age(self):
+        """
+        Calculate age based on birth_date.
+        The thicky part is that the age can be (in future versions) in different formats:
+        - yyyy-mm-dd
+        - yyyy-mm
+        - yyyy
+        Should display in years most of the time
+        if member.years < 2 then display in months
+        if member.years < 0 and member.months < 6 display in months with days
+        """
+        raise NotImplementedError
+
+    def since_death(self):
+        """Follows the same logic as age propery, but using death_date"""
+        raise NotImplementedError
 
     def _validate_sex(self):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
