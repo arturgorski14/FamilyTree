@@ -1,6 +1,3 @@
-import time
-import unittest.mock
-
 import factory
 import pytest
 from django.core.exceptions import ValidationError
