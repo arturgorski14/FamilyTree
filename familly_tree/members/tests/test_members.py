@@ -1,3 +1,5 @@
+from datetime import date
+
 import factory
 import pytest
 from django.core.exceptions import ValidationError
@@ -88,13 +90,6 @@ def test_invalid_sex(db):
     with pytest.raises(
         ValidationError, match="Diversity not supported. Sex must be 'm' or 'f'"
     ):
-        member.clean()
-
-
-def test_birth_after_death(db):
-    member = MemberFactory.build(birth_date="2000-01-01", death_date="1999-01-01")
-
-    with pytest.raises(ValidationError, match="Birth date must be before death date"):
         member.clean()
 
 
@@ -225,6 +220,38 @@ def test_member_not_alive(db):
 
     assert member.alive == "No"
     assert member.death_date == death_date
+
+
+def test_parse_full_date():
+    member = Member(firstname="John", lastname="Doe", birth_date="1990-05-15")
+    member.clean()
+    assert member.birth_date == date(1990, 5, 15)
+
+
+def test_parse_year_month_date():
+    member = Member(firstname="Jane", lastname="Doe", birth_date="1990-05")
+    member.clean()
+    assert member.birth_date == date(1990, 5, 1)
+
+
+def test_parse_year_only_date():
+    member = Member(firstname="Jake", lastname="Doe", birth_date="1990")
+    member.clean()
+    assert member.birth_date == date(1990, 1, 1)
+
+
+def test_invalid_date_format():
+    member = Member(firstname="Invalid", lastname="Date", birth_date="invalid-date")
+    with pytest.raises(ValidationError, match="Invalid date format"):
+        member.clean()
+
+
+def test_birth_date_before_death_date():
+    member = Member(
+        firstname="John", lastname="Doe", birth_date="1990", death_date="1980"
+    )
+    with pytest.raises(ValidationError, match="Birth date must be before death date"):
+        member.clean()
 
 
 """
