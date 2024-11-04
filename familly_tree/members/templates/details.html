@@ -35,6 +35,11 @@
         <p>Mother: Nobody remembers the mother</p>
     {% endif %}
 
+    {% if member.description %}
+        <h4>Dodatkowe informacje:</h4>
+        <p>{{ member.description }}</p>
+    {% endif %}
+
     {% include "edit_button.html" %}
     <p>Back to <a href="/members">Members</a></p>
 {% endblock %}

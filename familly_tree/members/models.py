@@ -18,6 +18,7 @@ class Member(models.Model):
     death_date = models.CharField(null=True, default=None, blank=True, max_length=10)
     father_id = models.IntegerField(null=True, blank=True)
     mother_id = models.IntegerField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, max_length=2000)
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"

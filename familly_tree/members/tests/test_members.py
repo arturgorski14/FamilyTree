@@ -21,6 +21,7 @@ class MemberFactory(factory.Factory):
     death_date = None
     father_id = None
     mother_id = None
+    description = None
 
 
 def test_create_default_member(db):
@@ -33,6 +34,7 @@ def test_create_default_member(db):
         "death_date": None,
         "father_id": None,
         "mother_id": None,
+        "description": None,
     }
 
     member: Member = MemberFactory(firstname="John", lastname="Doe", sex="m")
