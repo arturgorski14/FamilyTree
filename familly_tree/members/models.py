@@ -14,8 +14,8 @@ class Member(models.Model):
     lastname = models.CharField(max_length=255)
     family_name = models.CharField(max_length=255, blank=True)
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
-    birth_date = models.DateField(null=True, blank=True)
-    death_date = models.DateField(null=True, default=None, blank=True)
+    birth_date = models.CharField(null=True, default=None, blank=True, max_length=10)
+    death_date = models.CharField(null=True, default=None, blank=True, max_length=10)
     father_id = models.IntegerField(null=True, blank=True)
     mother_id = models.IntegerField(null=True, blank=True)
 
