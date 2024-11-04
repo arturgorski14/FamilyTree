@@ -1,9 +1,10 @@
-from datetime import date
+import unittest.mock
 
 import factory
 import pytest
 from django.core.exceptions import ValidationError
 from django.test import TestCase  # noqa E501
+from freezegun import freeze_time
 
 from members.forms import MemberForm
 from members.models import Member
@@ -272,10 +273,24 @@ def test_birth_date_before_death_date(db, birth_date, death_date):
         member.clean()
 
 
+# @pytest.mark.parametrize("birth_date", "death_date, expected_age", [
+#     (None, None, None),
+#     ("2015-03-10", None, None),
+#
+# ])
+# @unittest.mock.patch()
+# def test_age_property(db, birth_date, death_date, expected_age):
+@freeze_time("2024-11-04")
+def test_age_property(db):
+    member = MemberFactory(birth_date="2015-03-10")
+    member.save()
+
+    assert str(member.age) == "2024-11-04"
+
 """
 Features TODO:
-- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
-2.0
+- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be .0valid
+2
 - improved front-end (not only list based, but view tree based)
 - CRUD and linking by performing UI operations, not solely based on buttons.
 

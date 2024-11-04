@@ -59,7 +59,7 @@ class Member(models.Model):
         return Member.objects.filter(id=self.mother_id).first()
 
     @property
-    def age(self):
+    def age(self) -> str:
         """
         Calculate age based on birth_date.
         The thicky part is that the age can be (in future versions) in different formats:
@@ -70,7 +70,8 @@ class Member(models.Model):
         if member.years < 2 then display in months
         if member.years < 0 and member.months < 6 display in months with days
         """
-        raise NotImplementedError
+        variable = date.today()
+        return variable
 
     def since_death(self):
         """Follows the same logic as age propery, but using death_date"""

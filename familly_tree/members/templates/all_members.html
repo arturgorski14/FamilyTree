@@ -6,6 +6,7 @@
       <th>Id</th>
       <th>Name</th>
       <th>Sex</th>
+      <th>Age</th>
       <th>Alive?</th>
       <th>Numer of children</th>
       <th>Father</th>
@@ -30,6 +31,9 @@
         {% else %}
           Female
         {% endif %}
+      </td>
+      <td>
+        {{ member.age }}
       </td>
       <td>
         {{ member.alive }}
