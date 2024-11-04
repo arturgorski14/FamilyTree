@@ -33,7 +33,7 @@
         {% endif %}
       </td>
       <td>
-        {{ member.age }}
+        {{ member.age|default_if_none:"Unknown" }}
       </td>
       <td>
         {{ member.alive }}
