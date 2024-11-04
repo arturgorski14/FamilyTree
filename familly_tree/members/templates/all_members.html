@@ -7,6 +7,9 @@
       <th>Name</th>
       <th>Sex</th>
       <th>Alive?</th>
+      <th>Numer of children</th>
+      <th>Father</th>
+      <th>Mother</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -30,6 +33,23 @@
       </td>
       <td>
         {{ member.alive }}
+      </td>
+      <td>
+        {{ member.children.count }}
+      </td>
+      <td>
+        {% if member.father_id %}
+            <a href="{% url 'members:details' member.father_id %}" >{{ member.father }}</a>
+        {% else %}
+            Unknown
+        {% endif %}
+      </td>
+      <td>
+        {% if member.mother_id %}
+            <a href="{% url 'members:details' member.mother_id %}" >{{ member.mother }}</a>
+        {% else %}
+            Unknown
+        {% endif %}
       </td>
       <td class="actions">
         {% include "edit_button.html" %}
