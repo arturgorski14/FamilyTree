@@ -16,7 +16,7 @@
     <ul>
         {% if member.children %}
             {% for child in member.children %}
-                <li><a href="{% url 'members:details' child.id %}">{{ child.firstname }} {{ child.lastname }}</a></li>
+                <li><a href="{% url 'members:details' child.id %}">{{ child }}</a></li>
             {% endfor %}
         {% else %}
             <li>Doesn't have any.</li>
@@ -24,13 +24,13 @@
     </ul>
 
     {% if member.father_id %}
-        <p>Father: <a href="{% url 'members:details' member.father_id %}" >father_data</a></p>
+        <p>Father: <a href="{% url 'members:details' member.father_id %}" >{{ member.father }}</a></p>
     {% else %}
         <p>Father: Nobody remembers the father</p>
     {% endif %}
 
     {% if member.mother_id %}
-        <p>Mother: <a href="{% url 'members:details' member.mother_id %}" >mother_data</a></p>
+        <p>Mother: <a href="{% url 'members:details' member.mother_id %}" >{{ member.mother }}</a></p>
     {% else %}
         <p>Mother: Nobody remembers the mother</p>
     {% endif %}
