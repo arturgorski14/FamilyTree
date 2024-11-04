@@ -157,18 +157,12 @@ def test_member_children(db, sex, field):
     assert children.count() == 2
 
 
-def test_family_name_defaults_to_lastname(db):
-    member = MemberFactory(lastname="Smith", family_name=None, sex="m")
+@pytest.mark.parametrize("sex", ["m", "f"])
+def test_family_name_defaults_to_lastname(db, sex):
+    member = MemberFactory(lastname="Smith", family_name=None, sex=sex)
     member.save()
 
     assert member.family_name == "Smith"
-
-
-def test_family_name_defaults_to_unknown(db):
-    member = MemberFactory(lastname="Smith", family_name=None, sex="f")
-    member.save()
-
-    assert member.family_name == "???"
 
 
 @pytest.mark.parametrize("sex", ["m", "f"])

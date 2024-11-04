@@ -37,10 +37,7 @@ class Member(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         if not self.family_name:
-            if self.sex == self.Sex.MALE:
-                self.family_name = self.lastname
-            else:
-                self.family_name = "???"
+            self.family_name = self.lastname
         super().save(*args, **kwargs)
 
     @property
