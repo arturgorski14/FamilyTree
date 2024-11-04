@@ -265,6 +265,14 @@ def test_invalid_birth_date_format(db, invalid_date, date_type):
         member.clean()
 
 
+@freeze_time("2024-06-15")
+def test_birth_date_before_today(db):
+    member = MemberFactory(birth_date="2024-06-16")
+
+    with pytest.raises(ValidationError, match="Birth date must be before today."):
+        member.clean()
+
+
 @pytest.mark.parametrize("birth_date", ["2024-05-10", "2024-05", "2024"])
 @pytest.mark.parametrize("death_date", ["1999-11-28", "1999-11", "1999"])
 def test_birth_date_before_death_date(db, birth_date, death_date):
@@ -273,19 +281,43 @@ def test_birth_date_before_death_date(db, birth_date, death_date):
         member.clean()
 
 
-# @pytest.mark.parametrize("birth_date", "death_date, expected_age", [
-#     (None, None, None),
-#     ("2015-03-10", None, None),
-#
-# ])
-# @unittest.mock.patch()
-# def test_age_property(db, birth_date, death_date, expected_age):
-@freeze_time("2024-11-04")
-def test_age_property(db):
-    member = MemberFactory(birth_date="2015-03-10")
+@freeze_time("2024-06-15")
+@pytest.mark.parametrize(
+    "birth_date, death_date, expected_age_in_years",
+    [
+        # 1. Kompletne daty ("%Y-%m-%d")
+        ("2000-06-15", "2000-06-15", 0),
+        ("2000-06-15", "2001-06-15", 1),
+        ("2000-06-15", "2001-06-14", 0),
+        ("2000-06-15", "2010-06-16", 10),
+        ("2000-06-15", "2010-06-14", 9),
+        # 2. Same lata ("%Y") i pełna data ("%Y-%m-%d")
+        ("2000", "2010-06-15", 10),
+        ("2000", "2009-12-31", 9),
+        ("2000", "2024-06-15", 24),
+        # 3. Rok i miesiąc ("%Y-%m") oraz pełna data ("%Y-%m-%d")
+        ("2000-05", "2010-05-20", 10),
+        ("2000-05", "2009-04-30", 8),
+        # 4. Różne formaty dla `birth_date` i `death_date` (rok i miesiąc, sam rok)
+        ("2000", "2010-05", 10),
+        ("2000-06", "2010", 9),
+        ("2000-06", "2010-06", 10),
+        ("2000", "2000-12", 0),
+        # 5. Brak `death_date` (czyli bieżąca data ustawiona na "2024-06-15")
+        ("2000-06-15", None, 24),
+        ("2000", None, 24),
+        ("2000-06", None, 24),
+        # 6. Dni graniczne
+        ("2000-02-29", "2001-03-01", 1),
+        ("2000-12-31", "2011-01-01", 10),
+    ],
+)
+def test_age_property(db, birth_date, death_date, expected_age_in_years):
+    member = MemberFactory(birth_date=birth_date, death_date=death_date)
     member.save()
 
-    assert str(member.age) == "2024-11-04"
+    assert member.age == expected_age_in_years
+
 
 """
 Features TODO:

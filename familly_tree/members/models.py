@@ -59,19 +59,18 @@ class Member(models.Model):
         return Member.objects.filter(id=self.mother_id).first()
 
     @property
-    def age(self) -> str:
+    def age(self) -> int:
         """
-        Calculate age based on birth_date.
+        Calculate age based on birth_date and death_date.
         The thicky part is that the age can be (in future versions) in different formats:
         - yyyy-mm-dd
         - yyyy-mm
         - yyyy
-        Should display in years most of the time
+        Should display in years most of the time (but for now just full years will be enough):
         if member.years < 2 then display in months
         if member.years < 0 and member.months < 6 display in months with days
         """
-        variable = date.today()
-        return variable
+        return self.calculate_age()
 
     def since_death(self):
         """Follows the same logic as age propery, but using death_date"""
@@ -150,3 +149,36 @@ class Member(models.Model):
             case _:
                 raise ValueError
         return True
+
+    def calculate_age(self):
+        """Calculate age based on birth_date and death_date, if provided."""
+        birth_date = self.parse_date(str(self.birth_date))
+        if not birth_date:
+            return None
+
+        death_date = (
+            self.parse_date(str(self.death_date)) or datetime.now().date()
+        )  # Use current date if no death_date
+
+        # Calculate the difference in years, months, and days
+        age_years = death_date.year - birth_date.year
+        if death_date.month < birth_date.month or (
+            death_date.month == birth_date.month and death_date.day < birth_date.day
+        ):
+            age_years -= 1  # Adjust if birth date hasn't occurred yet this year
+
+        return age_years
+
+    def parse_date(self, date_str):
+        """Parse date_str into a date object. Partial dates default to the start of the month/year."""
+        if not date_str:
+            return None
+        try:
+            if len(date_str) == 10:  # "YYYY-MM-DD"
+                return datetime.strptime(date_str, "%Y-%m-%d").date()
+            elif len(date_str) == 7:  # "YYYY-MM"
+                return datetime.strptime(date_str, "%Y-%m").date()
+            elif len(date_str) == 4:  # "YYYY"
+                return datetime.strptime(date_str, "%Y").date()
+        except ValueError:
+            return None
