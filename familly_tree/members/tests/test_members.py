@@ -227,8 +227,8 @@ def test_member_not_alive(db):
     "birth_date",
     [
         "1990-05-15",
-        # "1990-05",
-        # "1990",
+        "1990-05",
+        "1990",
     ],
 )
 def test_parse_full_birth_date(db, birth_date):
@@ -242,8 +242,8 @@ def test_parse_full_birth_date(db, birth_date):
     "death_date",
     [
         "2000-01-01",
-        # "2024-08",
-        # "2024",
+        "2024-08",
+        "2024",
     ],
 )
 def test_parse_full_death_date(db, death_date):
@@ -253,8 +253,19 @@ def test_parse_full_death_date(db, death_date):
     assert member.death_date == death_date
 
 
-def test_invalid_birth_date_format(db):  # TODO: add death_date
-    member = MemberFactory(birth_date="invalid-date")
+@pytest.mark.parametrize(
+    "invalid_date",
+    [
+        "invalid-date",
+        "20120-01-07",
+        "2012-13-07",
+        "2012-010-07",
+        "2012-01-32",
+        "2012-01-072",
+    ],
+)
+def test_invalid_birth_date_format(db, invalid_date):  # TODO: add death_date
+    member = MemberFactory(birth_date=invalid_date)
     with pytest.raises(
         ValidationError,
         match="birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format.",
@@ -265,13 +276,19 @@ def test_invalid_birth_date_format(db):  # TODO: add death_date
 @pytest.mark.parametrize(
     "birth_date, death_date",
     [
-        ("1990", "1980"),
+        ("2024-05-10", "1999-11-28"),
+        ("2024-05", "1999-11-28"),
+        ("2024", "1999-11-28"),
+        ("2024-05-10", "1999-11"),
+        ("2024-05", "1999-11"),
+        ("2024", "1999-11"),
+        ("2024-05-10", "1999"),
+        ("2024-05", "1999"),
+        ("2024", "1999"),
     ],
 )
 def test_birth_date_before_death_date(db, birth_date, death_date):
-    member = Member(
-        firstname="John", lastname="Doe", birth_date=birth_date, death_date=death_date
-    )
+    member = MemberFactory(birth_date=birth_date, death_date=death_date)
     with pytest.raises(ValidationError, match="Birth date must be before death date"):
         member.clean()
 
