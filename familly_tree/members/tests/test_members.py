@@ -264,29 +264,20 @@ def test_parse_full_death_date(db, death_date):
         "2012-01-072",
     ],
 )
-def test_invalid_birth_date_format(db, invalid_date):  # TODO: add death_date
-    member = MemberFactory(birth_date=invalid_date)
+@pytest.mark.parametrize("date_type", ["birth_date", "death_date"])
+def test_invalid_birth_date_format(db, invalid_date, date_type):
+    data = {date_type: invalid_date}
+    member = MemberFactory(**data)
+
     with pytest.raises(
         ValidationError,
-        match="birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format.",
+        match=f"{date_type} must be in YYYY, YYYY-MM, or YYYY-MM-DD format.",
     ):
         member.clean()
 
 
-@pytest.mark.parametrize(
-    "birth_date, death_date",
-    [
-        ("2024-05-10", "1999-11-28"),
-        ("2024-05", "1999-11-28"),
-        ("2024", "1999-11-28"),
-        ("2024-05-10", "1999-11"),
-        ("2024-05", "1999-11"),
-        ("2024", "1999-11"),
-        ("2024-05-10", "1999"),
-        ("2024-05", "1999"),
-        ("2024", "1999"),
-    ],
-)
+@pytest.mark.parametrize("birth_date", ["2024-05-10", "2024-05", "2024"])
+@pytest.mark.parametrize("death_date", ["1999-11-28", "1999-11", "1999"])
 def test_birth_date_before_death_date(db, birth_date, death_date):
     member = MemberFactory(birth_date=birth_date, death_date=death_date)
     with pytest.raises(ValidationError, match="Birth date must be before death date"):
