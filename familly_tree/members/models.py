@@ -143,7 +143,6 @@ class Member(models.Model):
         parsed_date = self.parse_date(str(self.birth_date))
         if parsed_date is None:
             return False
-        breakpoint()
         return today <= parsed_date
 
     @staticmethod
