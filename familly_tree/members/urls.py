@@ -10,4 +10,5 @@ urlpatterns = [
     path(f"{app_name}/add/", views.AddNew.as_view(), name="add"),
     path(f"{app_name}/edit/<int:pk>", views.EditMember.as_view(), name="edit"),
     path(f"{app_name}/remove/<int:pk>", views.DeleteMember.as_view(), name="remove"),
+    path(f"{app_name}/tree", views.TreeView.as_view(), name="tree"),
 ]

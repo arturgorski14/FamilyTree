@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
-from django.views.generic import CreateView, DeleteView, UpdateView
+from django.views.generic import CreateView, DeleteView, UpdateView, TemplateView
 
 from .forms import MemberForm
 from .models import Member
@@ -42,3 +42,12 @@ class DeleteMember(DeleteView):
 def main(request):
     template = "main.html"
     return render(request, template)
+
+
+class TreeView(TemplateView):
+    model = Member
+    success_url = "members/tree"
+    template_name = "tree.html"
+
+    def get_queryset(self):
+        return
