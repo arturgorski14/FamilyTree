@@ -117,8 +117,6 @@ class Member(models.Model):
                 )
 
     def _validate_dates(self):
-        self._is_birthdate_before_death_date()
-
         if self.birth_date:
             try:
                 self._is_valid_date_format(str(self.birth_date))
@@ -127,6 +125,8 @@ class Member(models.Model):
                     "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
                     # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
                 )
+            if self._is_birthday_before_today():
+                raise ValidationError("Birth date must be before today.")
         if self.death_date:
             try:
                 not self._is_valid_date_format(str(self.death_date))
@@ -135,6 +135,16 @@ class Member(models.Model):
                     "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
                     # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
                 )
+
+        self._is_birthdate_before_death_date()
+
+    def _is_birthday_before_today(self) -> bool:
+        today = date.today()
+        parsed_date = self.parse_date(str(self.birth_date))
+        if parsed_date is None:
+            return False
+        breakpoint()
+        return today <= parsed_date
 
     @staticmethod
     def _is_valid_date_format(_date: str):
