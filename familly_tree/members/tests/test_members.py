@@ -224,32 +224,18 @@ def test_member_not_alive(db):
 
 
 @pytest.mark.parametrize(
-    "birth_date",
+    "birth_date, death_date",
     [
-        "1990-05-15",
-        "1990-05",
-        "1990",
+        ("1990-05-15", "2000-01-01"),
+        ("1990-05", "2024-08"),
+        ("1990", "2024"),
     ],
 )
-def test_parse_full_birth_date(db, birth_date):
-    member = MemberFactory(birth_date=birth_date)
+def test_parse_full_date(db, birth_date, death_date):
+    member = MemberFactory(birth_date=birth_date, death_date=death_date)
     member.save()
 
     assert member.birth_date == birth_date
-
-
-@pytest.mark.parametrize(
-    "death_date",
-    [
-        "2000-01-01",
-        "2024-08",
-        "2024",
-    ],
-)
-def test_parse_full_death_date(db, death_date):
-    member = MemberFactory(death_date=death_date)
-    member.save()
-
     assert member.death_date == death_date
 
 
