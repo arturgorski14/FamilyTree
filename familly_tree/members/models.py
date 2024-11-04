@@ -1,5 +1,5 @@
-import datetime
 import re
+from datetime import date, datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -30,9 +30,8 @@ class Member(models.Model):
     def clean(self):
         super().clean()
         self._validate_sex()
-        self._validate_if_birthdate_is_before_death_date()
-        self._validate_father_and_mother()
         self._validate_dates()
+        self._validate_father_and_mother()
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -80,7 +79,7 @@ class Member(models.Model):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
             raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
 
-    def _validate_if_birthdate_is_before_death_date(self):
+    def _is_birthdate_before_death_date(self):
         if not self.birth_date or not self.death_date:
             return
         if self.birth_date > self.death_date:
@@ -117,11 +116,35 @@ class Member(models.Model):
                 )
 
     def _validate_dates(self):
-        if self.birth_date and not re.match(r"^\d{4}(-\d{2}){0,2}$", self.birth_date):
-            raise ValidationError(
-                "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
-            )
-        if self.death_date and not re.match(r"^\d{4}(-\d{2}){0,2}$", self.death_date):
-            raise ValidationError(
-                "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
-            )
+        self._is_birthdate_before_death_date()
+
+        if self.birth_date:
+            try:
+                self._is_valid_date_format(str(self.birth_date))
+            except ValueError:
+                raise ValidationError(
+                    "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
+                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
+                )
+        if self.death_date:
+            try:
+                not self._is_valid_date_format(str(self.death_date))
+            except ValueError:
+                raise ValidationError(
+                    "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
+                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
+                )
+
+    @staticmethod
+    def _is_valid_date_format(_date: str):
+        """Check if the date is in a valid format and represents a real date."""
+        match len(_date):
+            case 4:
+                datetime.strptime(_date, "%Y")
+            case 7:
+                datetime.strptime(_date, "%Y-%m")
+            case 10:
+                datetime.strptime(_date, "%Y-%m-%d")
+            case _:
+                raise ValueError
+        return True
