@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 choices=[("m", "Male"), ("f", "Female")],
                 default="m",
-                max_length=1,  # noqa E501
+                max_length=1,
             ),
         ),
         migrations.AlterField(

@@ -1,4 +1,3 @@
-import re
 from datetime import date, datetime
 
 from django.core.exceptions import ValidationError
@@ -25,7 +24,7 @@ class Member(models.Model):
 
     def __repr__(self):
         born = f"born {self.birth_date}" if self.birth_date else ""
-        died = f"died {self.death_date}" if self.death_date else ""  # noqa E501
+        died = f"died {self.death_date}" if self.death_date else ""
         return f"{self.firstname} {self.lastname} {born} {died}"
 
     def clean(self):

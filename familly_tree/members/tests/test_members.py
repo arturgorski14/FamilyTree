@@ -1,9 +1,6 @@
-import unittest.mock
-
 import factory
 import pytest
 from django.core.exceptions import ValidationError
-from django.test import TestCase  # noqa E501
 from freezegun import freeze_time
 
 from members.forms import MemberForm
