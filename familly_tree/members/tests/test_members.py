@@ -320,7 +320,6 @@ def test_age_property(db, birth_date, death_date, expected_age_in_years):
 
 """
 Features TODO:
-- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be .0valid
 2
 - improved front-end (not only list based, but view tree based)
 - CRUD and linking by performing UI operations, not solely based on buttons.

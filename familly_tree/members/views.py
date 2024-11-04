@@ -51,4 +51,4 @@ class TreeView(TemplateView):
     template_name = "tree.html"
 
     def get_queryset(self):
-        return
+        return  # TODO: return List of TreeStructures (multiple root nodes). After that write front-end using react or vue.
