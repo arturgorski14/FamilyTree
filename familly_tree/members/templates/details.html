@@ -8,7 +8,7 @@
     <p>Sex: {{ member.sex }}</p>
     <p>Birth date: {{ member.birth_date }}</p>
     <p>Alive: {{ member.alive }}</p>
-    {% if not member.alive %}
+    {% if member.alive == "No" %}
         <p>Death date: {{ member.death_date }}</p>
     {% endif %}
 
