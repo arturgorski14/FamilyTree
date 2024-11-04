@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -31,6 +32,7 @@ class Member(models.Model):
         self._validate_sex()
         self._validate_if_birthdate_is_before_death_date()
         self._validate_father_and_mother()
+        self._validate_dates()
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -113,3 +115,13 @@ class Member(models.Model):
                 raise ValidationError(
                     "Non-existent or invalid mother: Mother must exist and be female."
                 )
+
+    def _validate_dates(self):
+        if self.birth_date and not re.match(r"^\d{4}(-\d{2}){0,2}$", self.birth_date):
+            raise ValidationError(
+                "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
+            )
+        if self.death_date and not re.match(r"^\d{4}(-\d{2}){0,2}$", self.death_date):
+            raise ValidationError(
+                "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
+            )

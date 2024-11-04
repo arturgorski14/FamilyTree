@@ -211,6 +211,7 @@ def test_member_alive(db):
     member.save()
 
     assert member.alive == "Yes"
+    assert member.death_date is None
 
 
 def test_member_not_alive(db):
@@ -222,33 +223,54 @@ def test_member_not_alive(db):
     assert member.death_date == death_date
 
 
-def test_parse_full_date():
-    member = Member(firstname="John", lastname="Doe", birth_date="1990-05-15")
-    member.clean()
-    assert member.birth_date == date(1990, 5, 15)
+@pytest.mark.parametrize(
+    "birth_date",
+    [
+        "1990-05-15",
+        # "1990-05",
+        # "1990",
+    ],
+)
+def test_parse_full_birth_date(db, birth_date):
+    member = MemberFactory(birth_date=birth_date)
+    member.save()
+
+    assert member.birth_date == birth_date
 
 
-def test_parse_year_month_date():
-    member = Member(firstname="Jane", lastname="Doe", birth_date="1990-05")
-    member.clean()
-    assert member.birth_date == date(1990, 5, 1)
+@pytest.mark.parametrize(
+    "death_date",
+    [
+        "2000-01-01",
+        # "2024-08",
+        # "2024",
+    ],
+)
+def test_parse_full_death_date(db, death_date):
+    member = MemberFactory(death_date=death_date)
+    member.save()
+
+    assert member.death_date == death_date
 
 
-def test_parse_year_only_date():
-    member = Member(firstname="Jake", lastname="Doe", birth_date="1990")
-    member.clean()
-    assert member.birth_date == date(1990, 1, 1)
-
-
-def test_invalid_date_format():
-    member = Member(firstname="Invalid", lastname="Date", birth_date="invalid-date")
-    with pytest.raises(ValidationError, match="Invalid date format"):
+def test_invalid_birth_date_format(db):  # TODO: add death_date
+    member = MemberFactory(birth_date="invalid-date")
+    with pytest.raises(
+        ValidationError,
+        match="birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format.",
+    ):
         member.clean()
 
 
-def test_birth_date_before_death_date():
+@pytest.mark.parametrize(
+    "birth_date, death_date",
+    [
+        ("1990", "1980"),
+    ],
+)
+def test_birth_date_before_death_date(db, birth_date, death_date):
     member = Member(
-        firstname="John", lastname="Doe", birth_date="1990", death_date="1980"
+        firstname="John", lastname="Doe", birth_date=birth_date, death_date=death_date
     )
     with pytest.raises(ValidationError, match="Birth date must be before death date"):
         member.clean()
@@ -256,12 +278,12 @@ def test_birth_date_before_death_date():
 
 """
 Features TODO:
+- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
 2.0
 - improved front-end (not only list based, but view tree based)
 - CRUD and linking by performing UI operations, not solely based on buttons.
 
 Future
-- birth_date/death_date as not full date ie yyyy-mm-dd is a full date, so yyyy-mm and yyyy should also be valid
 - authorization.
 - view other user family.
 - add user to family and merge families.
