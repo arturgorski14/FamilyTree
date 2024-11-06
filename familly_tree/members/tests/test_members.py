@@ -51,42 +51,46 @@ def test_create_default_member(db):
 
 
 def test_link_non_existent_father_id(db):
+    member = MemberFactory.build(father_id=999)
+
     with pytest.raises(
         ValidationError,
         match="Non-existent or invalid father: Father must exist and be male.",
     ):
-        member = MemberFactory.build(father_id=999)
         member.clean()
 
 
 def test_link_non_existent_mother_id(db):
+    member = MemberFactory.build(mother_id=999)
+
     with pytest.raises(
         ValidationError,
         match="Non-existent or invalid mother: Mother must exist and be female.",
     ):
-        member = MemberFactory.build(mother_id=999)
         member.clean()
 
 
 def test_female_as_father(db):
-    mother: Member = MemberFactory.build(sex="f")
+    mother = MemberFactory.build(sex="f")
     mother.save()
+    member = MemberFactory.build(father_id=mother.id)
+
     with pytest.raises(
         ValidationError,
         match="Non-existent or invalid father: Father must exist and be male.",
     ):
-        member = MemberFactory.build(father_id=mother.id)
         member.clean()
 
 
 def test_male_as_mother(db):
-    father: Member = MemberFactory.build(sex="m")
+    father = MemberFactory.build(sex="m")
     father.save()
+    member = MemberFactory.build(mother_id=father.id)
+
     with pytest.raises(
         ValidationError,
         match="Non-existent or invalid mother: Mother must exist and be female.",
     ):
-        member = MemberFactory.build(mother_id=father.id)
         member.clean()
 
 
@@ -282,6 +286,7 @@ def test_birth_date_before_today(db):
 @pytest.mark.parametrize("death_date", ["1999-11-28", "1999-11", "1999"])
 def test_birth_date_before_death_date(db, birth_date, death_date):
     member = MemberFactory(birth_date=birth_date, death_date=death_date)
+
     with pytest.raises(ValidationError, match="Birth date must be before death date"):
         member.clean()
 
