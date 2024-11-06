@@ -22,6 +22,12 @@ class MemberFactory(factory.Factory):
     description = None
 
 
+def create_and_save_member(**kwargs) -> Member:
+    member = MemberFactory(**kwargs)
+    member.save()
+    return member
+
+
 def test_create_default_member(db):
     expected_data = {
         "firstname": "John",
@@ -316,6 +322,26 @@ def test_age_property(db, birth_date, death_date, expected_age_in_years):
     member.save()
 
     assert member.age == expected_age_in_years
+
+
+def test_circular_connections(db):
+    grandx3father = MemberFactory(sex="m")
+    grandx3father.save()
+    grandx2father = MemberFactory(father_id=grandx3father.id, sex="m")
+    grandx2father.save()
+    grandfather = MemberFactory(father_id=grandx2father.id, sex="m")
+    grandfather.save()
+    father = MemberFactory(father_id=grandfather.id, sex="m")
+    father.save()
+    child = MemberFactory(father_id=father.id, sex="m")
+    child.save()
+
+    with pytest.raises(
+        ValidationError,
+        match=f"Cannot create circular connection between {grandx3father} and {child}!",
+    ):
+        grandx3father.father_id = child.father.id
+        grandx3father.save()
 
 
 """
