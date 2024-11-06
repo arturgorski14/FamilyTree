@@ -166,7 +166,7 @@ class Member(models.Model):
             return None
 
         death_date = (
-                self.__parse_date(str(self.death_date)) or datetime.now().date()
+            self.__parse_date(str(self.death_date)) or datetime.now().date()
         )  # Use current date if no death_date
 
         # Calculate the difference in years, months, and days

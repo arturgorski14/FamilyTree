@@ -324,6 +324,17 @@ def test_age_property(db, birth_date, death_date, expected_age_in_years):
     assert member.age == expected_age_in_years
 
 
+def test_father_born_before_child(db):
+    father = MemberFactory(sex="m", birth_date="2020")
+    father.save()
+    child = MemberFactory(father_id=father.id, birth_date="1990")
+
+    with pytest.raises(
+        ValidationError, match=f"{child} cannot be older than it's parent {father}!"
+    ):
+        child.save()
+
+
 def test_circular_connections(db):
     grandx3father = MemberFactory(sex="m")
     grandx3father.save()
