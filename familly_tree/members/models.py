@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -19,13 +20,13 @@ class Member(models.Model):
     mother_id = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True, max_length=2000)
 
-    def __str__(self):
-        return f"{self.firstname} {self.lastname}"
-
     def __repr__(self):
         born = f"born {self.birth_date}" if self.birth_date else ""
         died = f"died {self.death_date}" if self.death_date else ""
         return f"{self.firstname} {self.lastname} {born} {died}"
+
+    def __str__(self):
+        return f"{self.firstname} {self.lastname}"
 
     def clean(self):
         super().clean()
@@ -38,6 +39,20 @@ class Member(models.Model):
         if not self.family_name:
             self.family_name = self.lastname
         super().save(*args, **kwargs)
+
+    @property
+    def age(self) -> int:
+        """
+        Calculate age based on birth_date and death_date.
+        The thicky part is that the age can be (in future versions) in different formats:
+        - yyyy-mm-dd
+        - yyyy-mm
+        - yyyy
+        Should display in years most of the time (but for now just full years will be enough):
+        if member.years < 2 then display in months
+        if member.years < 0 and member.months < 6 display in months with days
+        """
+        return self.__calculate_age()
 
     @property
     def alive(self) -> str:
@@ -57,35 +72,33 @@ class Member(models.Model):
     def mother(self) -> "Member":
         return Member.objects.filter(id=self.mother_id).first()
 
-    @property
-    def age(self) -> int:
-        """
-        Calculate age based on birth_date and death_date.
-        The thicky part is that the age can be (in future versions) in different formats:
-        - yyyy-mm-dd
-        - yyyy-mm
-        - yyyy
-        Should display in years most of the time (but for now just full years will be enough):
-        if member.years < 2 then display in months
-        if member.years < 0 and member.months < 6 display in months with days
-        """
-        return self.calculate_age()
-
-    def since_death(self):
+    def since_death(self) -> int:
         """Follows the same logic as age propery, but using death_date"""
         raise NotImplementedError
 
-    def _validate_sex(self):
-        if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
-            raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
+    def _validate_dates(self) -> None:
+        if self.birth_date:
+            try:
+                self._is_valid_date_format(str(self.birth_date))
+            except ValueError:
+                raise ValidationError(
+                    "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
+                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
+                )
+            if self._is_birthday_before_today():
+                raise ValidationError("Birth date must be before today.")
+        if self.death_date:
+            try:
+                not self._is_valid_date_format(str(self.death_date))
+            except ValueError:
+                raise ValidationError(
+                    "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
+                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
+                )
 
-    def _is_birthdate_before_death_date(self):
-        if not self.birth_date or not self.death_date:
-            return
-        if self.birth_date > self.death_date:
-            raise ValidationError("Birth date must be before death date")
+        self.__is_birthdate_before_death_date()
 
-    def _validate_father_and_mother(self):
+    def _validate_father_and_mother(self) -> None:
         if not self.father_id and not self.mother_id:
             return
         if self.father_id and self.father_id == self.id:
@@ -115,37 +128,25 @@ class Member(models.Model):
                     "Non-existent or invalid mother: Mother must exist and be female."
                 )
 
-    def _validate_dates(self):
-        if self.birth_date:
-            try:
-                self._is_valid_date_format(str(self.birth_date))
-            except ValueError:
-                raise ValidationError(
-                    "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
-                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
-                )
-            if self._is_birthday_before_today():
-                raise ValidationError("Birth date must be before today.")
-        if self.death_date:
-            try:
-                not self._is_valid_date_format(str(self.death_date))
-            except ValueError:
-                raise ValidationError(
-                    "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
-                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
-                )
+    def _validate_sex(self) -> None:
+        if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
+            raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
 
-        self._is_birthdate_before_death_date()
+    def __is_birthdate_before_death_date(self) -> None:
+        if not self.birth_date or not self.death_date:
+            return
+        if self.birth_date > self.death_date:
+            raise ValidationError("Birth date must be before death date")
 
     def _is_birthday_before_today(self) -> bool:
         today = date.today()
-        parsed_date = self.parse_date(str(self.birth_date))
+        parsed_date = self.__parse_date(str(self.birth_date))
         if parsed_date is None:
             return False
         return today <= parsed_date
 
     @staticmethod
-    def _is_valid_date_format(_date: str):
+    def _is_valid_date_format(_date: str) -> str | bool:
         """Check if the date is in a valid format and represents a real date."""
         match len(_date):
             case 4:
@@ -158,14 +159,14 @@ class Member(models.Model):
                 raise ValueError
         return True
 
-    def calculate_age(self):
+    def __calculate_age(self) -> Optional[int]:
         """Calculate age based on birth_date and death_date, if provided."""
-        birth_date = self.parse_date(str(self.birth_date))
+        birth_date = self.__parse_date(str(self.birth_date))
         if not birth_date:
             return None
 
         death_date = (
-            self.parse_date(str(self.death_date)) or datetime.now().date()
+                self.__parse_date(str(self.death_date)) or datetime.now().date()
         )  # Use current date if no death_date
 
         # Calculate the difference in years, months, and days
@@ -177,7 +178,7 @@ class Member(models.Model):
 
         return age_years
 
-    def parse_date(self, date_str):
+    def __parse_date(self, date_str) -> datetime.date:
         """Parse date_str into a date object. Partial dates default to the start of the month/year."""
         if not date_str:
             return None
