@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
-from django.views.generic import CreateView, DeleteView, TemplateView, UpdateView
+from django.views.generic import (CreateView, DeleteView, TemplateView,
+                                  UpdateView)
 
 from .forms import MemberForm
 from .models import Member

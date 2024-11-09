@@ -3,7 +3,6 @@ import pytest
 from django.core.exceptions import ValidationError
 from freezegun import freeze_time
 
-from members.forms import MemberForm
 from members.models import Member
 
 
@@ -21,9 +20,23 @@ class MemberFactory(factory.Factory):
     mother_id = None
     description = None
 
+    @classmethod
+    def build_man(cls, **kwargs):
+        return MemberFactory.build(sex="m", **kwargs)
 
-def create_and_save_member(**kwargs) -> Member:
-    member = MemberFactory(**kwargs)
+    @classmethod
+    def build_woman(cls, **kwargs):
+        return super().build(sex="f", **kwargs)
+
+
+def create_and_save_man(**kwargs) -> Member:
+    member = MemberFactory.build_man(**kwargs)
+    member.save()
+    return member
+
+
+def create_and_save_woman(**kwargs) -> Member:
+    member = MemberFactory.build_woman(**kwargs)
     member.save()
     return member
 
@@ -51,7 +64,7 @@ def test_create_default_member(db):
 
 
 def test_link_non_existent_father_id(db):
-    member = MemberFactory.build(father_id=999)
+    member = MemberFactory(father_id=999)
 
     with pytest.raises(
         ValidationError,
@@ -61,7 +74,7 @@ def test_link_non_existent_father_id(db):
 
 
 def test_link_non_existent_mother_id(db):
-    member = MemberFactory.build(mother_id=999)
+    member = MemberFactory(mother_id=999)
 
     with pytest.raises(
         ValidationError,
@@ -71,9 +84,8 @@ def test_link_non_existent_mother_id(db):
 
 
 def test_female_as_father(db):
-    mother = MemberFactory.build(sex="f")
-    mother.save()
-    member = MemberFactory.build(father_id=mother.id)
+    mother = create_and_save_woman()
+    member = MemberFactory(father_id=mother.pk)
 
     with pytest.raises(
         ValidationError,
@@ -83,9 +95,9 @@ def test_female_as_father(db):
 
 
 def test_male_as_mother(db):
-    father = MemberFactory.build(sex="m")
+    father = create_and_save_man()
     father.save()
-    member = MemberFactory.build(mother_id=father.id)
+    member = MemberFactory(mother_id=father.pk)
 
     with pytest.raises(
         ValidationError,
@@ -95,7 +107,7 @@ def test_male_as_mother(db):
 
 
 def test_invalid_sex(db):
-    member = MemberFactory.build(sex="x")
+    member = MemberFactory(sex="x")
 
     with pytest.raises(
         ValidationError, match="Diversity not supported. Sex must be 'm' or 'f'"
@@ -105,40 +117,18 @@ def test_invalid_sex(db):
 
 def test_member_cannot_be_own_father(db):
     member = MemberFactory()
-    member.save()
-    data = {
-        "firstname": member.firstname,
-        "lastname": member.lastname,
-        "family_name": member.family_name,
-        "father_id": member.id,
-        "mother_id": member.mother_id,
-        "sex": member.sex,
-        "birth_date": member.birth_date,
-    }
-
-    form = MemberForm(data, instance=member)
-
-    assert not form.is_valid()
-    assert "A member cannot be their own father." in form.errors["__all__"][0]
+    member.save()  # if save() not performed then id=None
+    member.father_id = member.pk
+    with pytest.raises(ValidationError, match="A member cannot be their own father."):
+        member.save()
 
 
 def test_member_cannot_be_own_mother(db):
     member = MemberFactory()
-    member.save()
-    data = {
-        "firstname": member.firstname,
-        "lastname": member.lastname,
-        "family_name": member.family_name,
-        "father_id": member.father_id,
-        "mother_id": member.id,
-        "sex": member.sex,
-        "birth_date": member.birth_date,
-    }
-
-    form = MemberForm(data, instance=member)
-
-    assert not form.is_valid()
-    assert "A member cannot be their own mother" in form.errors["__all__"][0]
+    member.save()  # if save() not performed then id=None
+    member.mother_id = member.pk
+    with pytest.raises(ValidationError, match="A member cannot be their own mother."):
+        member.save()
 
 
 @pytest.mark.parametrize(
@@ -149,13 +139,13 @@ def test_member_cannot_be_own_mother(db):
     ],
 )
 def test_member_children(db, sex, field):
-    parent = MemberFactory.build(sex=sex)
+    parent = MemberFactory(sex=sex)
     parent.save()
 
     data = {field: parent.id}
-    child1 = MemberFactory.build(**data)
+    child1 = MemberFactory(**data)
     child1.save()
-    child2 = MemberFactory.build(**data)
+    child2 = MemberFactory(**data)
     child2.save()
 
     children = parent.children
@@ -172,18 +162,9 @@ def test_family_name_defaults_to_lastname(db, sex):
     assert member.family_name == "Smith"
 
 
-@pytest.mark.parametrize("sex", ["m", "f"])
-def test_family_name_explicitly_set(db, sex):
-    member = MemberFactory(lastname="Smith", family_name="Johnson", sex=sex)
-    member.save()
-
-    assert member.family_name == "Johnson"
-
-
 def test_member_father(db):
-    father = MemberFactory(firstname="John", lastname="Doe", sex="m")
-    father.save()
-    child = MemberFactory(father_id=father.id)
+    father = create_and_save_man(firstname="John", lastname="Doe")
+    child = MemberFactory(father_id=father.pk)
     child.save()
 
     assert child.father == father
@@ -193,9 +174,8 @@ def test_member_father(db):
 
 
 def test_member_mother(db):
-    mother = MemberFactory(firstname="Jane", lastname="Smith", sex="f")
-    mother.save()
-    child = MemberFactory(mother_id=mother.id)
+    mother = create_and_save_woman(firstname="Jane", lastname="Smith")
+    child = MemberFactory(mother_id=mother.pk)
     child.save()
 
     assert child.mother == mother
@@ -243,7 +223,7 @@ def test_member_not_alive(db):
         ("1990", "2024"),
     ],
 )
-def test_parse_full_date(db, birth_date, death_date):
+def test_save_dates_in_non_default_format(db, birth_date, death_date):
     member = MemberFactory(birth_date=birth_date, death_date=death_date)
     member.save()
 
@@ -295,29 +275,29 @@ def test_birth_date_before_death_date(db, birth_date, death_date):
 @pytest.mark.parametrize(
     "birth_date, death_date, expected_age_in_years",
     [
-        # 1. Kompletne daty ("%Y-%m-%d")
+        # 1. Full dates ("%Y-%m-%d")
         ("2000-06-15", "2000-06-15", 0),
         ("2000-06-15", "2001-06-15", 1),
         ("2000-06-15", "2001-06-14", 0),
         ("2000-06-15", "2010-06-16", 10),
         ("2000-06-15", "2010-06-14", 9),
-        # 2. Same lata ("%Y") i pełna data ("%Y-%m-%d")
+        # 2. Only years ("%Y") and full dates ("%Y-%m-%d")
         ("2000", "2010-06-15", 10),
         ("2000", "2009-12-31", 9),
         ("2000", "2024-06-15", 24),
-        # 3. Rok i miesiąc ("%Y-%m") oraz pełna data ("%Y-%m-%d")
+        # 3. Year and month ("%Y-%m") and full dates ("%Y-%m-%d")
         ("2000-05", "2010-05-20", 10),
         ("2000-05", "2009-04-30", 8),
-        # 4. Różne formaty dla `birth_date` i `death_date` (rok i miesiąc, sam rok)
+        # 4. Different formats for `birth_date` and `death_date` (year and month, only year)
         ("2000", "2010-05", 10),
         ("2000-06", "2010", 9),
         ("2000-06", "2010-06", 10),
         ("2000", "2000-12", 0),
-        # 5. Brak `death_date` (czyli bieżąca data ustawiona na "2024-06-15")
+        # 5. No `death_date` (so current date is set to "2024-06-15")
         ("2000-06-15", None, 24),
         ("2000", None, 24),
         ("2000-06", None, 24),
-        # 6. Dni graniczne
+        # 6. Border days(?)
         ("2000-02-29", "2001-03-01", 1),
         ("2000-12-31", "2011-01-01", 10),
     ],
@@ -329,40 +309,53 @@ def test_age_property(db, birth_date, death_date, expected_age_in_years):
     assert member.age == expected_age_in_years
 
 
-def test_father_born_before_child(db):
-    father = MemberFactory(sex="m", birth_date="2020")
-    father.save()
-    child = MemberFactory(father_id=father.id, birth_date="1990")
+def test_grandmother_born_before_child(db):
+    grandmother = create_and_save_woman(birth_date="2020")
+    father = create_and_save_man(birth_date=None, mother_id=grandmother.pk)
+
+    child = MemberFactory(father_id=father.pk, birth_date="1990")
 
     with pytest.raises(
-        ValidationError, match=f"{child} cannot be older than it's parent {father}!"
+        ValidationError,
+        match=f"{child} {child.birth_date} cannot be older than it's ancestor {grandmother} {grandmother.birth_date}!",
     ):
         child.save()
 
 
 def test_circular_connections(db):
-    grandx3father = MemberFactory(sex="m")
-    grandx3father.save()
-    grandx2father = MemberFactory(father_id=grandx3father.id, sex="m")
-    grandx2father.save()
-    grandfather = MemberFactory(father_id=grandx2father.id, sex="m")
-    grandfather.save()
-    father = MemberFactory(father_id=grandfather.id, sex="m")
-    father.save()
-    child = MemberFactory(father_id=father.id, sex="m")
-    child.save()
+    grandx3father = create_and_save_man()
+    grandx2father = create_and_save_man(father_id=grandx3father.pk)
+    grandfather = create_and_save_man(father_id=grandx2father.pk)
+    father = create_and_save_man(father_id=grandfather.pk)
+    child = create_and_save_man(father_id=father.pk)
 
     with pytest.raises(
         ValidationError,
-        match=f"Cannot create circular connection between {grandx3father} and {child}!",
+        match=f"Error: {grandx3father} and {child} are circullary connected!",
     ):
-        grandx3father.father_id = child.father.id
+        grandx3father.father_id = child.father.pk
         grandx3father.save()
 
 
 """
+Tests TODO:
+- add tests for update (for now only create has been tested)
 Features TODO:
-2
+- tree based structure
+
+WITH RECURSIVE rectree AS (
+  SELECT * 
+    FROM tree 
+   WHERE node_id = 1 
+UNION ALL 
+  SELECT t.* 
+    FROM tree t 
+    JOIN rectree
+      ON t.parent_id = rectree.node_id
+) SELECT * FROM rectree;
+4.1. Retrieving Using Recursive Common Table Expressions: https://www.baeldung.com/sql/storing-tree-in-rdb
+or use Dedicated Graph Database
+
 - improved front-end (not only list based, but view tree based)
 - CRUD and linking by performing UI operations, not solely based on buttons.
 

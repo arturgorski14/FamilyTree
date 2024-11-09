@@ -3,6 +3,7 @@ from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import QuerySet
 
 
 class Member(models.Model):
@@ -59,7 +60,7 @@ class Member(models.Model):
         return "Yes" if self.death_date is None else "No"
 
     @property
-    def children(self) -> list["Member"]:
+    def children(self) -> QuerySet:
         return Member.objects.filter(
             models.Q(father_id=self.id) | models.Q(mother_id=self.id)
         )
@@ -99,12 +100,12 @@ class Member(models.Model):
         self.__is_birthdate_before_death_date()
 
     def _validate_father_and_mother(self) -> None:
+        if self.father_id and self.father_id == self.pk:
+            raise ValidationError("A member cannot be their own father.")
+        if self.mother_id and self.mother_id == self.pk:
+            raise ValidationError("A member cannot be their own mother.")
         if not self.father_id and not self.mother_id:
             return
-        if self.father_id and self.father_id == self.id:
-            raise ValidationError("A member cannot be their own father.")
-        if self.mother_id and self.mother_id == self.id:
-            raise ValidationError("A member cannot be their own mother.")
 
         parent_ids = [pid for pid in (self.father_id, self.mother_id) if pid]
         parents = Member.objects.filter(id__in=parent_ids).values("id", "sex")
