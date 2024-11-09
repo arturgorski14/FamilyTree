@@ -22,9 +22,9 @@ class Member(models.Model):
     description = models.TextField(null=True, blank=True, max_length=2000)
 
     def __repr__(self):
-        born = f"born {self.birth_date}" if self.birth_date else ""
-        died = f"died {self.death_date}" if self.death_date else ""
-        return f"{self.firstname} {self.lastname} {born} {died}"
+        born = f" born {self.birth_date}" if self.birth_date else ""
+        died = f" died {self.death_date}" if self.death_date else ""
+        return f"{self.firstname} {self.lastname}{born}{died}"
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
