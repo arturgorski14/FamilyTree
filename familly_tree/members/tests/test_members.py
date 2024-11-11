@@ -16,8 +16,8 @@ class MemberFactory(factory.Factory):
     sex = factory.Iterator([Member.Sex.MALE, Member.Sex.FEMALE])
     birth_date = None
     death_date = None
-    father_id = None
-    mother_id = None
+    father = None
+    mother = None
     description = None
 
     @classmethod
@@ -49,8 +49,8 @@ def test_create_default_member(db):
         "sex": "m",
         "birth_date": None,
         "death_date": None,
-        "father_id": None,
-        "mother_id": None,
+        "father": None,
+        "mother": None,
         "description": None,
     }
 
@@ -324,8 +324,12 @@ def test_grandmother_born_before_child(db):
 
 def test_grandchildren_died_before_ancestor_was_born(db):
     grandx2father = create_and_save_man(birth_date="1850", death_date=None)
-    grandfather = create_and_save_man(birth_date=None, death_date=None, father_id=grandx2father.pk)
-    mother = create_and_save_woman(birth_date=None, death_date=None, father_id=grandfather.pk)
+    grandfather = create_and_save_man(
+        birth_date=None, death_date=None, father_id=grandx2father.pk
+    )
+    mother = create_and_save_woman(
+        birth_date=None, death_date=None, father_id=grandfather.pk
+    )
 
     child = MemberFactory(birth_date=None, death_date="1840", mother_id=mother.pk)
 

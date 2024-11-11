@@ -3,7 +3,7 @@ from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 
 
 class Member(models.Model):
@@ -17,9 +17,22 @@ class Member(models.Model):
     sex = models.CharField(max_length=1, choices=Sex, default=Sex.MALE)
     birth_date = models.CharField(null=True, default=None, blank=True, max_length=10)
     death_date = models.CharField(null=True, default=None, blank=True, max_length=10)
-    father_id = models.IntegerField(null=True, blank=True)
-    mother_id = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True, max_length=2000)
+
+    father = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="children_father",
+    )
+    mother = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="children_mother",
+    )
 
     def __repr__(self):
         born = f" born {self.birth_date}" if self.birth_date else ""
@@ -62,17 +75,8 @@ class Member(models.Model):
 
     @property
     def children(self) -> QuerySet:
-        return Member.objects.filter(
-            models.Q(father_id=self.id) | models.Q(mother_id=self.id)
-        )
-
-    @property
-    def father(self) -> "Member":
-        return Member.objects.filter(id=self.father_id).first()
-
-    @property
-    def mother(self) -> "Member":
-        return Member.objects.filter(id=self.mother_id).first()
+        # Returns all Member instances where this instance is either father or mother
+        return Member.objects.filter(Q(father=self) | Q(mother=self))
 
     def since_death(self) -> int:
         """Follows the same logic as age propery, but using death_date"""
@@ -134,10 +138,8 @@ class Member(models.Model):
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
             raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
 
-
     def _validate_ancestor(self) -> None:
         pass
-
 
     def __is_birthdate_before_death_date(self) -> None:
         if not self.birth_date or not self.death_date:
