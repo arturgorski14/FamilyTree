@@ -1,0 +1,17 @@
+{% extends "master.html" %}
+
+{% block content %}
+    <h1>Choose an Existing Child for {{ parent.firstname }} {{ parent.lastname }}</h1>
+
+    <ul>
+        {% for member in members %}
+            <li>
+                <a href="{% url 'members:add_child_to_parent' parent.id member.id %}">
+                    {{ member.firstname }} {{ member.lastname }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="{% url 'members:details' parent.id %}">Back to Parent Details</a></p>
+{% endblock %}

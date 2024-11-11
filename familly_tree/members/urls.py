@@ -11,4 +11,14 @@ urlpatterns = [
     path(f"{app_name}/edit/<int:pk>", views.EditMember.as_view(), name="edit"),
     path(f"{app_name}/remove/<int:pk>", views.DeleteMember.as_view(), name="remove"),
     path(f"{app_name}/tree", views.TreeView.as_view(), name="tree"),
+    path(
+        "choose_child/<int:parent_id>/",
+        views.ChooseChildView.as_view(),
+        name="choose_child",
+    ),
+    path(
+        "add_child/<int:parent_id>/<int:child_id>/",
+        views.add_child_to_parent,
+        name="add_child_to_parent",
+    ),
 ]
