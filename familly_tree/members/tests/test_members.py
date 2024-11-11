@@ -317,7 +317,21 @@ def test_grandmother_born_before_child(db):
 
     with pytest.raises(
         ValidationError,
-        match=f"{child} {child.birth_date} cannot be older than it's ancestor {grandmother} {grandmother.birth_date}!",
+        match=f"{child.__repr__()} cannot be older than it's ancestor {grandmother.__repr__()}!",
+    ):
+        child.save()
+
+
+def test_grandchildren_died_before_ancestor_was_born(db):
+    grandx2father = create_and_save_man(birth_date="1850", death_date=None)
+    grandfather = create_and_save_man(birth_date=None, death_date=None, father_id=grandx2father.pk)
+    mother = create_and_save_woman(birth_date=None, death_date=None, father_id=grandfather.pk)
+
+    child = MemberFactory(birth_date=None, death_date="1840", mother_id=mother.pk)
+
+    with pytest.raises(
+        ValidationError,
+        match=f"{child.__repr__()} cannot be older than it's ancestor {grandx2father.__repr__()}!",
     ):
         child.save()
 

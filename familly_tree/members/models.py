@@ -34,6 +34,7 @@ class Member(models.Model):
         self._validate_sex()
         self._validate_dates()
         self._validate_father_and_mother()
+        self._validate_ancestor()
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -132,6 +133,11 @@ class Member(models.Model):
     def _validate_sex(self) -> None:
         if self.sex not in (self.Sex.MALE, self.Sex.FEMALE):
             raise ValidationError("Diversity not supported. Sex must be 'm' or 'f'")
+
+
+    def _validate_ancestor(self) -> None:
+        pass
+
 
     def __is_birthdate_before_death_date(self) -> None:
         if not self.birth_date or not self.death_date:
