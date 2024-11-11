@@ -1,13 +1,13 @@
+from django.db.models import Q
 from django.shortcuts import render
-from django.views import generic
-from django.views.generic import (CreateView, DeleteView, TemplateView,
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import MemberForm
 from .models import Member
 
 
-class AllMembers(generic.ListView):
+class AllMembers(ListView):
     template_name = "all_members.html"
     context_object_name = "all_members"
 
@@ -15,7 +15,7 @@ class AllMembers(generic.ListView):
         return Member.objects.all()
 
 
-class Details(generic.DetailView):
+class Details(DetailView):
     model = Member
     template_name = "details.html"
 
@@ -45,10 +45,16 @@ def main(request):
     return render(request, template)
 
 
-class TreeView(TemplateView):
+class TreeView(ListView):
     model = Member
     success_url = "members/tree"
     template_name = "tree.html"
+    context_object_name = "members"
 
     def get_queryset(self):
-        return  # TODO: return List of TreeStructures (multiple root nodes). After that write front-end using react or vue.
+        # TODO: return List of TreeStructures (multiple root nodes). After that write front-end using react or vue.
+        father_null = Q(father_id__isnull=True)
+        mother_null = Q(mother_id__isnull=True)
+        roots = Member.objects.filter(father_null & mother_null).all()
+        roots_with_children = [root for root in roots if root.children.count() > 0]
+        return roots_with_children

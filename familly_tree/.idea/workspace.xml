@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b33e0e68-846c-4bd1-9872-41eeb1fa84da" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.flake8" beforeDir="false" afterPath="$PROJECT_DIR$/.flake8" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/static/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/members/static/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/add_button.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/add_button.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/all_members.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/all_members.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/delete_button.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/delete_button.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/edit_button.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/edit_button.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/edit_member.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/edit_member.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/staticfiles/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/staticfiles/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/members/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/members/templates/tree.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/tree.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/members/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

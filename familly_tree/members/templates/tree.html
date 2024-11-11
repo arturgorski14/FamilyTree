@@ -7,4 +7,11 @@
 
 {% block content %}
 <p>Here will be the tree</p>
+<p>Number of roots {{ members.count }}</p>
+{% for member in members %}
+  <p>
+    <a href="{% url 'members:details' member.id %}">{{ member }}</a>
+  </p>
+{% endfor %}
+<p>The end</p>
 {% endblock %}
