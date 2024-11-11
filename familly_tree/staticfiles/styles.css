@@ -3,56 +3,74 @@ body {
   font-family: verdana;
 }
 
-  .btn {
-    padding: 6px 12px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-  }
+/* members table */
 
-  .btn:hover {
-    background-color: #0056b3;
-  }
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
 
-  .btn-add {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-  }
+.members-table th, .members-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
 
-  .btn-add:hover {
-    background-color: #218838;
-  }
+.member-alive {
+  background-color: #cce3de
+}
 
-    .members-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
+.member-dead {
+  background-color: grey
+}
 
-  .members-table th, .members-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
+.actions {
+  display: flex;
+  gap: 10px;
+}
 
-  .member-alive {
-    background-color: #cce3de
-  }
+/* buttons */
 
-  .member-dead {
-    background-color: grey
-  }
+.btn {
+  padding: 6px 12px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
 
-  .actions {
-    display: flex;
-    gap: 10px;
-  }
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.btn-add {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.btn-add:hover {
+  background-color: #218838;
+}
+
+.btn-delete {
+  padding: 6px 12px;
+  color: white;
+  background-color: #ff5733;
+  border: none;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.btn-delete:hover {
+  background-color: #c7442b;
+}

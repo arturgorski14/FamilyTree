@@ -1,22 +1,6 @@
-<form action="{% url 'members:remove' member.id %}" method="post">
+<form action="{% url 'members:remove' member.id %}" method="POST">
     {% csrf_token %}
     <button type="submit" class="btn-delete">
         Delete
     </button>
 </form>
-
-<style>
-  .btn-delete {
-    padding: 6px 12px;
-    color: white;
-    background-color: #ff5733;
-    border: none;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  .btn-delete:hover {
-    background-color: #c7442b;
-  }
-</style>

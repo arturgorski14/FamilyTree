@@ -1,5 +1,8 @@
-<h1>Members</h1>
+{% extends "master.html" %}
 
+{% block title %}<h1>Members</h1>{% endblock %}
+
+{% block content %}
 <table class="members-table">
   <thead>
     <tr>
@@ -70,29 +73,4 @@
 
 {% include "add_button.html" %}
 
-<style>
-  .members-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-
-  .members-table th, .members-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .member-alive {
-    background-color: #cce3de
-  }
-
-  .member-dead {
-    background-color: grey
-  }
-
-  .actions {
-    display: flex;
-    gap: 10px;
-  }
-</style>
+{% endblock %}
