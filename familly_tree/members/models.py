@@ -8,8 +8,8 @@ from django.db.models import Q, QuerySet
 
 class Member(models.Model):
     class Sex(models.TextChoices):
-        MALE = "m"
-        FEMALE = "f"
+        MALE = "m", "Male"
+        FEMALE = "f", "Female"
 
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
@@ -200,3 +200,23 @@ class Member(models.Model):
                 return datetime.strptime(date_str, "%Y").date()
         except ValueError:
             return None
+
+
+# class Relationship(models.Model):
+#     class RelationshipType(models.TextChoices):
+#         PARTNER = "p", "Partner"
+#         FIANCE = "f", "Fiance"
+#         SPOUSE = "s", "Spouse"
+#         FORMER_PARTNER = "fp", "Former Partner"
+#         FORMER_FIANCE = "ff", "Former Fiance"
+#         FORMER_SPOUSE = "fs", "Former Spouse"
+#
+#     member1 = models.ForeignKey(
+#         Member,
+#         on_delete=models.CASCADE
+#     )
+#     member2 = models.ForeignKey(
+#         Member,
+#         on_delete=models.CASCADE
+#     )
+#     relationship_type = models.CharField(max_length=1, choices=RelationshipType, default=RelationshipType.PARTNER)
