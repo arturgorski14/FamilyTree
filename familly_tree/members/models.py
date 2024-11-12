@@ -75,7 +75,6 @@ class Member(models.Model):
 
     @property
     def children(self) -> QuerySet:
-        # Returns all Member instances where this instance is either father or mother
         return Member.objects.filter(Q(father=self) | Q(mother=self))
 
     def since_death(self) -> int:

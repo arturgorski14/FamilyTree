@@ -46,4 +46,35 @@
 
     {% include "edit_button.html" %}
     <p>Back to <a href="/members">Members</a></p>
+
+    <div>
+        <div class="grand-ancestor">
+            Grandfather from father side: {{ member.father.father|default_if_none:"Unknown" }}
+        </div>
+        <div class="grand-ancestor">
+            Grandmother from father side: {{ member.father.mother|default_if_none:"Unknown" }}
+        </div>
+        <div class="grand-ancestor">
+            Grandfather from mother side: {{ member.mother.father|default_if_none:"Unknown" }}
+        </div>
+        <div class="grand-ancestor">
+            Grandmother from mother side: {{ member.mother.mother|default_if_none:"Unknown" }}
+        </div>
+        <div class="member-parent">
+            Father: {{ member.father|default_if_none:"Unknown" }}
+        </div>
+        <div class="member-parent">
+            Mother: {{ member.mother|default_if_none:"Unknown" }}
+        </div>
+        </div>
+<!--        # TODO: use templatetag-->
+<!--        <div class="member-sibling">-->
+<!--            Sibling: {{ sibling }}-->
+<!--        </div>-->
+        {% for child in member.children %}
+            <div class="member-child">
+            Child: {{ child }}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

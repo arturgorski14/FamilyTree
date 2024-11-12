@@ -74,3 +74,19 @@ body {
 .btn-delete:hover {
   background-color: #c7442b;
 }
+
+.grand-ancestor {
+  background-color: red
+}
+
+.member-parent {
+  background-color: orange
+}
+
+.member-sibling {
+  background-color: green
+}
+
+.member-child {
+  background-color: lightblue
+}
