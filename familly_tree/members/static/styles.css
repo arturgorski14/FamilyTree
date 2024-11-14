@@ -80,6 +80,7 @@ body {
 .content-container {
   display: flex;
   gap: 20px;
+  padding: 20px;
 }
 
 .member-details {
@@ -108,15 +109,17 @@ body {
 .grand-ancestor, .member-parent, .member-sibling, .member-child {
   width: 150px;
   height: 150px;
-  background-color: lightgray;
-  border: 2px solid #666;
+  background-color: #f1f1f1;
+  border: 2px solid #aaa;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
+  color: #333;
   padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .grand-ancestor {
@@ -135,23 +138,19 @@ body {
   background-color: #cce5ff;
 }
 
-/* Optional: connecting lines to resemble tree branches */
-.family-tree::before,
-.generation::before,
-.generation::after {
-  content: "";
-  position: absolute;
-  border-left: 2px solid #666;
-  height: 20px;
-  width: 0;
+/* Link styling within family tree elements */
+.family-tree a {
+  color: #0056b3;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-.generation.parents::before {
-  top: -30px;
+.family-tree a:hover {
+  text-decoration: underline;
 }
 
-.generation.siblings::before,
-.generation.children::before {
-  top: -20px;
-}
+/* Optional styling for clearer generation separation */
+.generation {
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 15px;
 }
