@@ -67,10 +67,11 @@
             Mother: {{ member.mother|default_if_none:"Unknown" }}
         </div>
         </div>
-<!--        # TODO: use templatetag-->
-<!--        <div class="member-sibling">-->
-<!--            Sibling: {{ sibling }}-->
-<!--        </div>-->
+        {% for sibling in member.siblings %}
+        <div class="member-sibling">
+            Sibling: {{ sibling }}
+        </div>
+        {% endfor %}
         {% for child in member.children %}
             <div class="member-child">
             Child: {{ child }}
