@@ -75,17 +75,34 @@ body {
   background-color: #c7442b;
 }
 
-.family-tree {
+/* details */
+
+.content-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 20px;
+}
+
+.member-details {
+  width: 25%;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.family-tree {
+  width: 70%;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .generation {
   display: flex;
   justify-content: center;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
 .grand-ancestor, .member-parent, .member-sibling, .member-child {

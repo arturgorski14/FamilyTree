@@ -1,91 +1,95 @@
 {% extends "master.html" %}
 
 {% block content %}
-<h1 xmlns="http://www.w3.org/1999/html">{{ member.firstname }} {{ member.lastname }}</h1>
-    {% if member.family_name != member.lastname %}
-        <p>Family name: {{ member.family_name }}</p>
-    {% endif %}
-    <p>Sex: {{ member.sex }}</p>
-    <p>Age: {{ member.age }}</p>
-    <p>Birth date: {{ member.birth_date }}</p>
-    <p>Alive: {{ member.alive }}</p>
-    {% if member.alive == "No" %}
-        <p>Death date: {{ member.death_date }}</p>
-    {% endif %}
-
-    <p>Children:</p>
-    <ul>
-        {% if member.children %}
-            {% for child in member.children %}
-                <li><a href="{% url 'members:details' child.id %}">{{ child }}</a></li>
-            {% endfor %}
-        {% else %}
-            <li>Doesn't have any.</li>
+<div class="content-container">
+    <!-- Left Side: Member Details -->
+    <div class="member-details">
+        <h1>{{ member.firstname }} {{ member.lastname }}</h1>
+        {% if member.family_name != member.lastname %}
+            <p>Family name: {{ member.family_name }}</p>
         {% endif %}
-    </ul>
-    <!-- Link to choose an existing child -->
-    <a href="{% url 'members:choose_child' member.id %}">Add an existing child</a>
+        <p>Sex: {{ member.sex }}</p>
+        <p>Age: {{ member.age }}</p>
+        <p>Birth date: {{ member.birth_date }}</p>
+        <p>Alive: {{ member.alive }}</p>
+        {% if member.alive == "No" %}
+            <p>Death date: {{ member.death_date }}</p>
+        {% endif %}
 
+        <p>Children:</p>
+        <ul>
+            {% if member.children %}
+                {% for child in member.children %}
+                    <li><a href="{% url 'members:details' child.id %}">{{ child }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li>Doesn't have any.</li>
+            {% endif %}
+        </ul>
+        <a href="{% url 'members:choose_child' member.id %}">Add an existing child</a>
 
-    {% if member.father_id %}
-        <p>Father: <a href="{% url 'members:details' member.father_id %}" >{{ member.father }}</a></p>
-    {% else %}
-        <p>Father: Nobody remembers the father</p>
-    {% endif %}
+        {% if member.father_id %}
+            <p>Father: <a href="{% url 'members:details' member.father_id %}">{{ member.father }}</a></p>
+        {% else %}
+            <p>Father: Nobody remembers the father</p>
+        {% endif %}
 
-    {% if member.mother_id %}
-        <p>Mother: <a href="{% url 'members:details' member.mother_id %}" >{{ member.mother }}</a></p>
-    {% else %}
-        <p>Mother: Nobody remembers the mother</p>
-    {% endif %}
+        {% if member.mother_id %}
+            <p>Mother: <a href="{% url 'members:details' member.mother_id %}">{{ member.mother }}</a></p>
+        {% else %}
+            <p>Mother: Nobody remembers the mother</p>
+        {% endif %}
 
-    {% if member.description %}
-        <h4>Dodatkowe informacje:</h4>
-        <p>{{ member.description }}</p>
-    {% endif %}
+        {% if member.description %}
+            <h4>Additional Information:</h4>
+            <p>{{ member.description }}</p>
+        {% endif %}
 
-    {% include "edit_button.html" %}
-    <p>Back to <a href="/members">Members</a></p>
-
-<div class="family-tree">
-    <div class="generation grandparents">
-        <div class="grand-ancestor">
-            Grandfather from father side:<br>{{ member.father.father|default_if_none:"Unknown" }}
-        </div>
-        <div class="grand-ancestor">
-            Grandmother from father side:<br>{{ member.father.mother|default_if_none:"Unknown" }}
-        </div>
-        <div class="grand-ancestor">
-            Grandfather from mother side:<br>{{ member.mother.father|default_if_none:"Unknown" }}
-        </div>
-        <div class="grand-ancestor">
-            Grandmother from mother side:<br>{{ member.mother.mother|default_if_none:"Unknown" }}
-        </div>
+        {% include "edit_button.html" %}
+        <p>Back to <a href="/members">Members</a></p>
     </div>
 
-    <div class="generation parents">
-        <div class="member-parent">
-            Father:<br>{{ member.father|default_if_none:"Unknown" }}
+    <!-- Right Side: Family Tree -->
+    <div class="family-tree">
+        <div class="generation grandparents">
+            <div class="grand-ancestor">
+                Grandfather from father side:<br>{{ member.father.father|default_if_none:"Unknown" }}
+            </div>
+            <div class="grand-ancestor">
+                Grandmother from father side:<br>{{ member.father.mother|default_if_none:"Unknown" }}
+            </div>
+            <div class="grand-ancestor">
+                Grandfather from mother side:<br>{{ member.mother.father|default_if_none:"Unknown" }}
+            </div>
+            <div class="grand-ancestor">
+                Grandmother from mother side:<br>{{ member.mother.mother|default_if_none:"Unknown" }}
+            </div>
         </div>
-        <div class="member-parent">
-            Mother:<br>{{ member.mother|default_if_none:"Unknown" }}
-        </div>
-    </div>
 
-    <div class="generation siblings">
-        {% for sibling in member.siblings %}
-        <div class="member-sibling">
-            Sibling:<br>{{ sibling }}
+        <div class="generation parents">
+            <div class="member-parent">
+                Father:<br>{{ member.father|default_if_none:"Unknown" }}
+            </div>
+            <div class="member-parent">
+                Mother:<br>{{ member.mother|default_if_none:"Unknown" }}
+            </div>
         </div>
-        {% endfor %}
-    </div>
 
-    <div class="generation children">
-        {% for child in member.children %}
-        <div class="member-child">
-            Child:<br>{{ child }}
+        <div class="generation siblings">
+            {% for sibling in member.siblings %}
+            <div class="member-sibling">
+                Sibling:<br>{{ sibling }}
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <div class="generation children">
+            {% for child in member.children %}
+            <div class="member-child">
+                Child:<br>{{ child }}
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
