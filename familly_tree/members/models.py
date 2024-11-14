@@ -75,7 +75,13 @@ class Member(models.Model):
 
     @property
     def children(self) -> QuerySet:
-        return Member.objects.filter(Q(father=self) | Q(mother=self))
+        return Member.objects.filter(Q(father=self) | Q(mother=self))  # TODO: apply filter only if not None
+
+    @property
+    def siblings(self) -> QuerySet:
+        father_filter = Q(father__isnull=False, father=self.father)
+        mother_filter = Q(mother__isnull=False, mother=self.mother)
+        return Member.objects.filter(father_filter | mother_filter).exclude(id=self.pk)
 
     def since_death(self) -> int:
         """Follows the same logic as age propery, but using death_date"""

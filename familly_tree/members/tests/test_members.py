@@ -1,6 +1,7 @@
 import factory
 import pytest
 from django.core.exceptions import ValidationError
+from django.db.models import QuerySet
 from freezegun import freeze_time
 
 from members.models import Member
@@ -37,6 +38,12 @@ def create_and_save_man(**kwargs) -> Member:
 
 def create_and_save_woman(**kwargs) -> Member:
     member = MemberFactory.build_woman(**kwargs)
+    member.save()
+    return member
+
+
+def create_and_save_member(**kwargs) -> Member:
+    member = MemberFactory.build(**kwargs)
     member.save()
     return member
 
@@ -354,6 +361,25 @@ def test_circular_connections(db):
         grandx3father.father_id = child.father.pk
         grandx3father.save()
 
+
+def test_siblings(db):
+    parent = create_and_save_man(firstname="John")
+    daughter = create_and_save_woman(father_id=parent.pk, firstname="Joanna")
+    son = create_and_save_man(father_id=parent.pk, firstname="Janek")
+    unrelated = create_and_save_member()
+
+    assert list(parent.siblings) == []
+    assert list(son.siblings) == [daughter]
+    assert list(daughter.siblings) == [son]
+    assert list(unrelated.siblings) == []
+
+
+def test_siblings_property_no_parent_set(db):
+    member1 = create_and_save_member()
+    member2 = create_and_save_member()
+
+    assert list(member1.siblings) == []
+    assert list(member2.siblings) == []
 
 """
 TODO: spouse cases
