@@ -47,7 +47,8 @@
     {% include "edit_button.html" %}
     <p>Back to <a href="/members">Members</a></p>
 
-    <div>
+<div class="family-tree">
+    <div class="generation grandparents">
         <div class="grand-ancestor">
             Grandfather from father side:<br>{{ member.father.father|default_if_none:"Unknown" }}
         </div>
@@ -60,22 +61,31 @@
         <div class="grand-ancestor">
             Grandmother from mother side:<br>{{ member.mother.mother|default_if_none:"Unknown" }}
         </div>
+    </div>
+
+    <div class="generation parents">
         <div class="member-parent">
-            Father: {{ member.father|default_if_none:"Unknown" }}
+            Father:<br>{{ member.father|default_if_none:"Unknown" }}
         </div>
         <div class="member-parent">
-            Mother: {{ member.mother|default_if_none:"Unknown" }}
+            Mother:<br>{{ member.mother|default_if_none:"Unknown" }}
         </div>
-        </div>
+    </div>
+
+    <div class="generation siblings">
         {% for sibling in member.siblings %}
         <div class="member-sibling">
-            Sibling: {{ sibling }}
+            Sibling:<br>{{ sibling }}
         </div>
         {% endfor %}
+    </div>
+
+    <div class="generation children">
         {% for child in member.children %}
-            <div class="member-child">
-            Child: {{ child }}
-            </div>
+        <div class="member-child">
+            Child:<br>{{ child }}
+        </div>
         {% endfor %}
     </div>
+</div>
 {% endblock %}

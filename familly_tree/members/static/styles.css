@@ -75,66 +75,66 @@ body {
   background-color: #c7442b;
 }
 
-.grand-ancestor {
-  width: 240px;
-  height: 240px;
-  background-color: red;
-  border: 1px solid color;
-  border-radius: 50%;
+.family-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-  /* Centering content */
+.generation {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.grand-ancestor, .member-parent, .member-sibling, .member-child {
+  width: 150px;
+  height: 150px;
+  background-color: lightgray;
+  border: 2px solid #666;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* Optional: for multi-line text to be centered as well */
   text-align: center;
+  font-size: 14px;
+  padding: 10px;
+}
+
+.grand-ancestor {
+  background-color: #f8d7da;
 }
 
 .member-parent {
-  width: 250px;
-  height: 250px;
-  background-color: orange;
-  border: 1px solid color;
-  border-radius: 50%;
-
-  /* Centering content */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  /* Optional: for multi-line text to be centered as well */
-  text-align: center;
+  background-color: #ffeeba;
 }
 
 .member-sibling {
-  width: 250px;
-  height: 250px;
-  background-color: green;
-  border: 1px solid color;
-  border-radius: 50%;
-
-  /* Centering content */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  /* Optional: for multi-line text to be centered as well */
-  text-align: center;
+  background-color: #d4edda;
 }
 
 .member-child {
-  width: 250px;
-  height: 250px;
-  background-color: lightblue;
-  border: 1px solid color;
-  border-radius: 50%;
+  background-color: #cce5ff;
+}
 
-  /* Centering content */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Optional: connecting lines to resemble tree branches */
+.family-tree::before,
+.generation::before,
+.generation::after {
+  content: "";
+  position: absolute;
+  border-left: 2px solid #666;
+  height: 20px;
+  width: 0;
+}
 
-  /* Optional: for multi-line text to be centered as well */
-  text-align: center;
+.generation.parents::before {
+  top: -30px;
+}
+
+.generation.siblings::before,
+.generation.children::before {
+  top: -20px;
+}
 }
