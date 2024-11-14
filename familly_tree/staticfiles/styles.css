@@ -74,3 +74,43 @@ body {
 .btn-delete:hover {
   background-color: #c7442b;
 }
+
+.grand-ancestor {
+  width: 200px;
+  height: 200px;
+  background-color: red;
+  border: 1px solid color;
+  border-radius: 50%;
+
+  /* Centering content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Optional: for multi-line text to be centered as well */
+  text-align: center;
+}
+
+.member-parent {
+  width: 250px;
+  height: 250px;
+  background-color: orange;
+  border: 1px solid color;
+  border-radius: 50%;
+
+  /* Centering content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Optional: for multi-line text to be centered as well */
+  text-align: center;
+}
+
+.member-sibling {
+  background-color: green
+}
+
+.member-child {
+  background-color: lightblue
+}

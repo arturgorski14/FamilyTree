@@ -76,11 +76,35 @@ body {
 }
 
 .grand-ancestor {
-  background-color: red
+  width: 240px;
+  height: 240px;
+  background-color: red;
+  border: 1px solid color;
+  border-radius: 50%;
+
+  /* Centering content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Optional: for multi-line text to be centered as well */
+  text-align: center;
 }
 
 .member-parent {
-  background-color: orange
+  width: 250px;
+  height: 250px;
+  background-color: orange;
+  border: 1px solid color;
+  border-radius: 50%;
+
+  /* Centering content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Optional: for multi-line text to be centered as well */
+  text-align: center;
 }
 
 .member-sibling {

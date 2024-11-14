@@ -49,16 +49,16 @@
 
     <div>
         <div class="grand-ancestor">
-            Grandfather from father side: {{ member.father.father|default_if_none:"Unknown" }}
+            Grandfather from father side:<br>{{ member.father.father|default_if_none:"Unknown" }}
         </div>
         <div class="grand-ancestor">
-            Grandmother from father side: {{ member.father.mother|default_if_none:"Unknown" }}
+            Grandmother from father side:<br>{{ member.father.mother|default_if_none:"Unknown" }}
         </div>
         <div class="grand-ancestor">
-            Grandfather from mother side: {{ member.mother.father|default_if_none:"Unknown" }}
+            Grandfather from mother side:<br>{{ member.mother.father|default_if_none:"Unknown" }}
         </div>
         <div class="grand-ancestor">
-            Grandmother from mother side: {{ member.mother.mother|default_if_none:"Unknown" }}
+            Grandmother from mother side:<br>{{ member.mother.mother|default_if_none:"Unknown" }}
         </div>
         <div class="member-parent">
             Father: {{ member.father|default_if_none:"Unknown" }}
