@@ -75,7 +75,9 @@ class Member(models.Model):
 
     @property
     def children(self) -> QuerySet:
-        return Member.objects.filter(Q(father=self) | Q(mother=self))  # TODO: apply filter only if not None
+        father_filter = Q(father__isnull=False, father=self)
+        mother_filter = Q(mother__isnull=False, mother=self)
+        return Member.objects.filter(father_filter | mother_filter)
 
     @property
     def siblings(self) -> QuerySet:
