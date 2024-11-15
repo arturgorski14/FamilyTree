@@ -8,10 +8,11 @@
     <tr>
       <th>Id</th>
       <th>Name</th>
+      <th>Family Name</th>
       <th>Sex</th>
       <th>Age</th>
       <th>Alive?</th>
-      <th>Numer of children</th>
+      <th>Number of children</th>
       <th>Father</th>
       <th>Mother</th>
       <th>Actions</th>
@@ -29,6 +30,9 @@
         </a>
       </td>
       <td>
+        {{ member.family_name }}
+      </td>
+      <td>
         {% if member.sex == 'm' %}
           Male
         {% else %}
@@ -36,7 +40,7 @@
         {% endif %}
       </td>
       <td>
-        {{ member.age|default_if_none:"Unknown" }}
+        {{ member.age|default_if_none:"-" }}
       </td>
       <td>
         {{ member.alive }}
@@ -52,14 +56,14 @@
         {% if member.father_id %}
             <a href="{% url 'members:details' member.father_id %}" >{{ member.father }}</a>
         {% else %}
-            Unknown
+            -
         {% endif %}
       </td>
       <td>
         {% if member.mother_id %}
             <a href="{% url 'members:details' member.mother_id %}" >{{ member.mother }}</a>
         {% else %}
-            Unknown
+            -
         {% endif %}
       </td>
       <td class="actions">
