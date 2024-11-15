@@ -86,5 +86,12 @@
     <div class="generation children">
         {% display_family_members_list member.children "Child" %}
     </div>
+
+    <div class="generation grandchildren">
+        <!-- Gather all grandchildren -->
+        {% with grandchildren=member.children|map:"children"|sum %}
+        {% display_family_members_list grandchildren "Grandchild" %}
+        {% endwith %}
+    </div>
 </div>
 {% endblock %}

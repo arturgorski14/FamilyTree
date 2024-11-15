@@ -135,6 +135,28 @@ body {
     color: #fff;
 }
 
+.generation.grandchildren {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: center; /* Center-align grandchildren */
+    gap: 20px; /* Space between grandchildren */
+    margin-top: 20px; /* Space above the grandchildren section */
+}
+
+.member-grandchild {
+    width: 180px;
+    height: 180px;
+    background-color: #ccefff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #000;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .grand-ancestor {
   background-color: #f8d7da;
 }

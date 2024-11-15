@@ -12,8 +12,8 @@ def display_family_member(member, title):
         url = reverse('members:details', args=[member.id])
         html_output = f'<div class="member-{title.lower()}">{title}: <br><a href="{url}">{member}</a></div>'
     else:
-        plural_title = f"{title}s" if title.lower() != "child" else "children"
-        html_output = f'<div class="member-{title.lower()}">No {title.lower()} listed.</div>'
+        plural_title = f"{title}s" if title.lower() != "child" else "children"  # TODO: fix for grandchildren
+        html_output = f'<div class="member-{plural_title}">No {plural_title} listed.</div>'
 
     return mark_safe(html_output)
 
@@ -33,3 +33,15 @@ def display_family_members_list(members, title):
         html_output = f'<div class="member-{plural_title}">No {plural_title} listed.</div>'
 
     return mark_safe(html_output)
+
+
+@register.filter
+def map(value, arg):
+    """Applies a function (or attribute) to all items in a list."""
+    return [getattr(item, arg) for item in value if getattr(item, arg, None)]
+
+
+@register.filter
+def sum(value):
+    """Flattens a list of lists into a single list."""
+    return [item for sublist in value for item in sublist]
