@@ -75,6 +75,11 @@
     </div>
 
     <div class="generation siblings">
+        <!-- TODO: In the future member.spouse here -->
+        <div class="member-primary">
+        {% display_family_member member "Primary Member" %}
+        </div>
+
         {% display_family_members_list member.siblings "Sibling" %}
     </div>
 

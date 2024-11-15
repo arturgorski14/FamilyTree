@@ -7,12 +7,13 @@ register = template.Library()
 
 @register.simple_tag
 def display_family_member(member, title):
-    """Display a single family member with a link, or 'Unknown' if not available."""
+    """Display a single family member with a link, or a default message if not available."""
     if member:
         url = reverse('members:details', args=[member.id])
-        html_output = f'{title}: <br><a href="{url}">{member}</a>'
+        html_output = f'<div class="member-{title.lower()}">{title}: <br><a href="{url}">{member}</a></div>'
     else:
-        html_output = f'{title}: <br>Unknown'
+        plural_title = f"{title}s" if title.lower() != "child" else "children"
+        html_output = f'<div class="member-{title.lower()}">No {title.lower()} listed.</div>'
 
     return mark_safe(html_output)
 
@@ -28,11 +29,7 @@ def display_family_members_list(members, title):
         ]
         html_output = "".join(items)
     else:
-        lowered_title = title.lower()
-        if lowered_title == "child":
-            lowered_title = "children"
-        else:
-            lowered_title = f"{lowered_title}s"
-        html_output = f'<div class="member-{lowered_title}">No {lowered_title} listed.</div>'
+        plural_title = f"{title}s" if title.lower() != "child" else "children"
+        html_output = f'<div class="member-{plural_title}">No {plural_title} listed.</div>'
 
     return mark_safe(html_output)
