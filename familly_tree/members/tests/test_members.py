@@ -339,6 +339,44 @@ def test_siblings_property_no_parent_set(db):
     assert list(member1.siblings) == []
     assert list(member2.siblings) == []
 
+
+def test_marry_divorce_then_marry_again(db):
+    husband = create_and_save_man()
+    wife = create_and_save_woman()
+
+    husband.marry(wife, "2020-04-15")
+    assert husband.current_spouse == wife
+    assert wife.current_spouse == husband
+
+    second_wife = create_and_save_woman()
+
+    with pytest.raises(ValidationError):  # member is already! married
+        husband.marry(second_wife)
+
+    husband.divorce("2022-12-29")
+    assert husband.current_spouse is None
+    assert husband.ex_spouses == [wife]
+    assert wife.current_spouse is None
+    assert wife.ex_spouses == [husband]
+
+    husband.marry(second_wife)
+    assert husband.current_spouse == second_wife
+    assert second_wife.current_spouse == husband
+
+
+def test_cant_divorce_when_dont_have_spouse():
+    man = create_and_save_man()
+    woman = create_and_save_woman()
+
+    with pytest.raises(ValidationError, match=f"{man} has noone to divorce!"):
+        man.divorce()
+
+    with pytest.raises(ValidationError, match=f"{woman} has noone to divorce!"):
+        woman.divorce()
+
+
+def test_overlaping_mariage():
+    man = create_and_save_man()
 """
 Features TODO:
 - tree based structure

@@ -86,6 +86,20 @@ class Member(models.Model):
         father_filter = Q(father__isnull=False, father=self.father)
         mother_filter = Q(mother__isnull=False, mother=self.mother)
         return Member.objects.filter(father_filter | mother_filter).exclude(id=self.pk)
+    
+    @property
+    def current_spouse(self):
+        raise NotImplementedError
+    
+    @property
+    def ex_spouses(self):
+        raise NotImplementedError
+
+    def marry(self, spouse, marriage_date=None, divorce_date=None):
+        raise NotImplementedError
+
+    def divorce(self, divorce_date=None):
+        raise NotImplementedError
 
     def since_death(self) -> int:
         """Follows the same logic as age propery, but using death_date"""
@@ -209,33 +223,3 @@ class Member(models.Model):
                 return datetime.strptime(date_str, "%Y").date()
         except ValueError:
             return None
-
-
-# class SpouseRelationship(models.Model):
-#     member = models.OneToOneField(
-#         "Member",
-#         on_delete=models.CASCADE,
-#         related_name="spouse_relationship",
-#         help_text="The member in this relationship."
-#     )
-#     spouse = models.OneToOneField(
-#         "Member",
-#         on_delete=models.CASCADE,
-#         related_name="spouse_of",
-#         help_text="The spouse of the member."
-#     )
-#     marriage_date = models.DateField(null=True, blank=True, help_text="Date of marriage")
-#
-#     def __str__(self):
-#         return f"{self.member} is married to {self.spouse}"
-#
-#     def clean(self):
-#         super().clean()
-#         if self.member == self.spouse:
-#             raise ValidationError("A member cannot be married to themselves.")
-#
-#         # Ensure no overlapping active marriage
-#         if SpouseRelationship.objects.filter(member=self.member).exclude(pk=self.pk).exists():
-#             raise ValidationError("This member already has a spouse.")
-#         if SpouseRelationship.objects.filter(spouse=self.spouse).exclude(pk=self.pk).exists():
-#             raise ValidationError("This spouse is already married.")
