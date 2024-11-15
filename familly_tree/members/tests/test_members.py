@@ -340,19 +340,6 @@ def test_siblings_property_no_parent_set(db):
     assert list(member2.siblings) == []
 
 """
-TODO: spouse cases
-
-test_set_spouse_creates_bidirectional_relationship: Verifies that setting a spouse creates a bidirectional relationship, meaning both spouse_id fields are correctly set.
-
-test_unset_spouse_clears_bidirectional_relationship: Ensures that when a spouse relationship is cleared on one member, it is also cleared on the other.
-
-test_setting_self_as_spouse_raises_validation_error: Checks that setting a member’s spouse as themselves raises a ValidationError.
-
-test_bidirectional_spouse_relationship_remains_consistent: Tests that changing a member’s spouse to a new person updates the previous relationship. For example, if member2's spouse is changed from member1 to member3, member1 should no longer be linked to member2.
-
-test_changing_spouse_to_none_clears_relationship_for_both: Checks that when one member’s spouse_id is set to None, it clears the relationship for both.
-
-
 Features TODO:
 - tree based structure
 
