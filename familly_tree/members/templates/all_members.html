@@ -42,7 +42,11 @@
         {{ member.alive }}
       </td>
       <td>
-        {{ member.children.count }}
+        {% if member.children.count %}
+          {{ member.children.count }}
+        {% else %}
+          -
+        {% endif %}
       </td>
       <td>
         {% if member.father_id %}
