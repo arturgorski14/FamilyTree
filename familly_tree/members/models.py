@@ -75,9 +75,11 @@ class Member(models.Model):
 
     @property
     def children(self) -> QuerySet:
-        father_filter = Q(father__isnull=False, father=self)
-        mother_filter = Q(mother__isnull=False, mother=self)
-        return Member.objects.filter(father_filter | mother_filter)
+        if self.sex == self.Sex.MALE:
+            query_filter = Q(father__isnull=False, father=self)
+        else:
+            query_filter = Q(mother__isnull=False, mother=self)
+        return Member.objects.filter(query_filter)
 
     @property
     def siblings(self) -> QuerySet:
