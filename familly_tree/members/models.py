@@ -211,21 +211,31 @@ class Member(models.Model):
             return None
 
 
-# class Relationship(models.Model):
-#     class RelationshipType(models.TextChoices):
-#         PARTNER = "p", "Partner"
-#         FIANCE = "f", "Fiance"
-#         SPOUSE = "s", "Spouse"
-#         FORMER_PARTNER = "fp", "Former Partner"
-#         FORMER_FIANCE = "ff", "Former Fiance"
-#         FORMER_SPOUSE = "fs", "Former Spouse"
+# class SpouseRelationship(models.Model):
+#     member = models.OneToOneField(
+#         "Member",
+#         on_delete=models.CASCADE,
+#         related_name="spouse_relationship",
+#         help_text="The member in this relationship."
+#     )
+#     spouse = models.OneToOneField(
+#         "Member",
+#         on_delete=models.CASCADE,
+#         related_name="spouse_of",
+#         help_text="The spouse of the member."
+#     )
+#     marriage_date = models.DateField(null=True, blank=True, help_text="Date of marriage")
 #
-#     member1 = models.ForeignKey(
-#         Member,
-#         on_delete=models.CASCADE
-#     )
-#     member2 = models.ForeignKey(
-#         Member,
-#         on_delete=models.CASCADE
-#     )
-#     relationship_type = models.CharField(max_length=1, choices=RelationshipType, default=RelationshipType.PARTNER)
+#     def __str__(self):
+#         return f"{self.member} is married to {self.spouse}"
+#
+#     def clean(self):
+#         super().clean()
+#         if self.member == self.spouse:
+#             raise ValidationError("A member cannot be married to themselves.")
+#
+#         # Ensure no overlapping active marriage
+#         if SpouseRelationship.objects.filter(member=self.member).exclude(pk=self.pk).exists():
+#             raise ValidationError("This member already has a spouse.")
+#         if SpouseRelationship.objects.filter(spouse=self.spouse).exclude(pk=self.pk).exists():
+#             raise ValidationError("This spouse is already married.")
