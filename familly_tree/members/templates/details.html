@@ -1,4 +1,5 @@
 {% extends "master.html" %}
+{% load family_tree_tags %}
 
 {% block content %}
 <div class="content-container">
@@ -50,98 +51,35 @@
 
 <div class="family-tree">
     <div class="generation grandparents">
-        {% if member.father.father %}
         <div class="grand-ancestor">
-            Grandfather (Father’s Side):<br>
-            <a href="{% url 'members:details' member.father.father.id %}">{{ member.father.father }}</a>
+            {% display_family_member member.father.father "Grandfather (Father’s Side)" %}
         </div>
-        {% else %}
         <div class="grand-ancestor">
-            Grandfather (Father’s Side):<br>Unknown
+            {% display_family_member member.father.mother "Grandmother (Father’s Side)" %}
         </div>
-        {% endif %}
-
-        {% if member.father.mother %}
         <div class="grand-ancestor">
-            Grandmother (Father’s Side):<br>
-            <a href="{% url 'members:details' member.father.mother.id %}">{{ member.father.mother }}</a>
+            {% display_family_member member.mother.father "Grandfather (Mother’s Side)" %}
         </div>
-        {% else %}
         <div class="grand-ancestor">
-            Grandmother (Father’s Side):<br>Unknown
+            {% display_family_member member.mother.mother "Grandmother (Mother’s Side)" %}
         </div>
-        {% endif %}
-
-        {% if member.mother.father %}
-        <div class="grand-ancestor">
-            Grandfather (Mother’s Side):<br>
-            <a href="{% url 'members:details' member.mother.father.id %}">{{ member.mother.father }}</a>
-        </div>
-        {% else %}
-        <div class="grand-ancestor">
-            Grandfather (Mother’s Side):<br>Unknown
-        </div>
-        {% endif %}
-
-        {% if member.mother.mother %}
-        <div class="grand-ancestor">
-            Grandmother (Mother’s Side):<br>
-            <a href="{% url 'members:details' member.mother.mother.id %}">{{ member.mother.mother }}</a>
-        </div>
-        {% else %}
-        <div class="grand-ancestor">
-            Grandmother (Mother’s Side):<br>Unknown
-        </div>
-        {% endif %}
     </div>
 
     <div class="generation parents">
         <div class="member-parent">
-            Father:<br>
-            {% if member.father %}
-                <a href="{% url 'members:details' member.father.id %}">{{ member.father }}</a>
-            {% else %}
-                Unknown
-            {% endif %}
+            {% display_family_member member.father "Father" %}
         </div>
         <div class="member-parent">
-            Mother:<br>
-            {% if member.mother %}
-                <a href="{% url 'members:details' member.mother.id %}">{{ member.mother }}</a>
-            {% else %}
-                Unknown
-            {% endif %}
+            {% display_family_member member.mother "Mother" %}
         </div>
     </div>
 
     <div class="generation siblings">
-        {% if member.siblings %}
-            {% for sibling in member.siblings %}
-            <div class="member-sibling">
-                Sibling:<br>
-                <a href="{% url 'members:details' sibling.id %}">{{ sibling }}</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="member-sibling">
-                No siblings listed.
-            </div>
-        {% endif %}
+        {% display_family_members_list member.siblings "Sibling" %}
     </div>
 
     <div class="generation children">
-        {% if member.children %}
-            {% for child in member.children %}
-            <div class="member-child">
-                Child:<br>
-                <a href="{% url 'members:details' child.id %}">{{ child }}</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="member-child">
-                No children listed.
-            </div>
-        {% endif %}
+        {% display_family_members_list member.children "Child" %}
     </div>
 </div>
 {% endblock %}
