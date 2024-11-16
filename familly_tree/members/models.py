@@ -82,27 +82,24 @@ class Member(models.Model):
         return Member.objects.filter(query_filter)
 
     @property
+    def spouses(self) -> list["Member"]:
+        raise NotImplementedError
+
+    @property
     def siblings(self) -> QuerySet:
         father_filter = Q(father__isnull=False, father=self.father)
         mother_filter = Q(mother__isnull=False, mother=self.mother)
         return Member.objects.filter(father_filter | mother_filter).exclude(id=self.pk)
 
     @property
-    def current_spouse(self):
-        raise NotImplementedError
-
-    @property
-    def ex_spouses(self):
-        raise NotImplementedError
-
-    def marry(self, spouse, marriage_date=None, divorce_date=None):
-        raise NotImplementedError
-
-    def divorce(self, divorce_date=None):
-        raise NotImplementedError
-
     def since_death(self) -> int:
         """Follows the same logic as age propery, but using death_date"""
+        raise NotImplementedError
+
+    def divorce(self):
+        raise NotImplementedError
+
+    def marry(self, spouse):
         raise NotImplementedError
 
     def _validate_dates(self) -> None:
@@ -223,3 +220,11 @@ class Member(models.Model):
                 return datetime.strptime(date_str, "%Y").date()
         except ValueError:
             return None
+
+
+class MartialRelationship(models.Model):
+    """
+    Class used to track current, and previous marriages.
+    married=True - 2 people are maried with each other.
+    married=False - 2 people are divorced with each other.
+    """
