@@ -16,7 +16,7 @@ def display_family_member(member, title, link_url=None):
     :param link_url: The URL to link a missing family member (if any)
     """
     if member:
-        url = reverse('members:details', args=[member.id])
+        url = reverse("members:details", args=[member.id])
         html_output = f'<div class="member-{title.lower()}">{title}: <br><a href="{url}">{member}</a></div>'
     else:
         # Display a button if the member is missing
@@ -24,10 +24,14 @@ def display_family_member(member, title, link_url=None):
             f'<div class="member-{title.lower()}">'
             f'<form method="get" action="{link_url}">'
             f'<button type="submit" class="link-button">Link {title}</button>'
-            f'</form>'
-            f'</div>'
+            f"</form>"
+            f"</div>"
         )
-        html_output = button_html if link_url else f'<div class="member-{title.lower()}">No {title.lower()} listed.</div>'
+        html_output = (
+            button_html
+            if link_url
+            else f'<div class="member-{title.lower()}">No {title.lower()} listed.</div>'
+        )
 
     return mark_safe(html_output)
 

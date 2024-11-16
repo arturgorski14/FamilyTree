@@ -48,24 +48,18 @@ def test_display_family_member_with_no_member():
     """
     Test the display_family_member tag with no member.
     """
-    # template = """
-    #     {% load family_tree_tags %}
-    #     {% display_family_member member "Father" link_url="/members/add_parent/1/father/" %}
-    # """
     template = """
-          {% load family_tree_tags %}
-          {% display_family_member member "Father" %}
+        {% load family_tree_tags %}
+        {% display_family_member member "Father" link_url="/members/add_parent/1/father/" %}
     """
-    # expected_output = (
-    #     '<div class="member-father">'
-    #     '<form method="get" action="/members/add_parent/1/father/">'
-    #     '<button type="submit" class="link-button">Link Father</button>'
-    #     "</form>"
-    #     "</div>"
-    # )
-    expected_output = '<div class="member-father">No Fathers listed.</div>\n'
+    expected_output = (
+        '<div class="member-father">'
+        '<form method="get" action="/members/add_parent/1/father/">'
+        '<button type="submit" class="link-button">Link Father</button>'
+        "</form>"
+        "</div>"
+    )
     rendered = render_template(template, {"member": None})
-    breakpoint()
     assert expected_output in rendered
 
 
