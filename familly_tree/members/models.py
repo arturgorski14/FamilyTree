@@ -1,9 +1,10 @@
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Q, QuerySet, Prefetch
 
 
 class Member(models.Model):
@@ -82,10 +83,6 @@ class Member(models.Model):
         return Member.objects.filter(query_filter)
 
     @property
-    def spouses(self) -> QuerySet["Member"]:
-        raise NotImplementedError
-
-    @property
     def siblings(self) -> QuerySet:
         father_filter = Q(father__isnull=False, father=self.father)
         mother_filter = Q(mother__isnull=False, mother=self.mother)
@@ -96,11 +93,10 @@ class Member(models.Model):
         """Follows the same logic as age propery, but using death_date"""
         raise NotImplementedError
 
-    def divorce(self):
-        raise NotImplementedError
-
-    def marry(self, spouse):
-        raise NotImplementedError
+    @property
+    def spouses(self) -> list["SpouseData"]:
+        """Return all the spouses."""
+        return MartialRelationship.spouses(self)
 
     def _validate_dates(self) -> None:
         if self.birth_date:
@@ -222,10 +218,41 @@ class Member(models.Model):
             return None
 
 
-#
-# class MartialRelationship(models.Model):
-#     """
-#     Class used to track current, and previous marriages.
-#     married=True - 2 people are maried with each other.
-#     married=False - 2 people are divorced with each other.
-#     """
+@dataclass
+class SpouseData:
+    spouse: Member
+    married: bool
+
+
+class MartialRelationship(models.Model):
+    """
+    Tracks current and previous marriages.
+    married=True - Two members are married.
+    married=False - Two members are divorced.
+    """
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="martialrelationship")
+    spouse = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="spouse_relationships")
+    married = models.BooleanField(default=True)
+
+    @staticmethod
+    def spouses(member: Member) -> list[SpouseData]:
+        relationships = MartialRelationship.objects.filter(member=member)
+        return [SpouseData(rel.spouse, rel.married) for rel in relationships]
+
+    @staticmethod
+    def marry(member: Member, spouse: Member):
+        """Marry a spouse."""
+        if member == spouse:
+            raise ValueError("A member cannot marry themselves.")
+
+        MartialRelationship.objects.create(member=member, spouse=spouse, married=True)
+        MartialRelationship.objects.create(member=spouse, spouse=member, married=True)
+
+    @staticmethod
+    def divorce(member: Member, spouse: "Member"):
+        """Divorce a spouse."""
+        MartialRelationship.objects.filter(member=member, spouse=spouse, married=True).update(married=False)
+        MartialRelationship.objects.filter(member=spouse, spouse=member, married=True).update(married=False)
+
+    def __str__(self):
+        return f"{self.member} and {self.spouse} are{' not' if not self.married else ''} married"

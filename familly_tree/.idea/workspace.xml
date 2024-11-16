@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b33e0e68-846c-4bd1-9872-41eeb1fa84da" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TODOS.md" beforeDir="false" afterPath="$PROJECT_DIR$/TODOS.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/members/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/members/templates/details.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/details.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/members/tests/test_members.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/tests/test_members.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -16,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>

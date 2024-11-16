@@ -7,6 +7,7 @@
 # MEDIUM PRIORITY
 ## Tree based structure for all members at once (can be done as version expandable by user)
 ## Possibility to add photo for family member
+## Order members based on age instead of pk (in all_members and details)
 
 # LOW PRIORITY
 ## Authorization
