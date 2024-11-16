@@ -390,32 +390,3 @@ def test_cant_divorce_when_is_not_married(db):
         ValidationError, match=f"{woman} can't divorce because she is single!"
     ):
         woman.divorce()
-
-
-"""
-Features TODO:
-- tree based structure
-
-WITH RECURSIVE rectree AS (
-  SELECT * 
-    FROM tree 
-   WHERE node_id = 1 
-UNION ALL 
-  SELECT t.* 
-    FROM tree t 
-    JOIN rectree
-      ON t.parent_id = rectree.node_id
-) SELECT * FROM rectree;
-4.1. Retrieving Using Recursive Common Table Expressions: https://www.baeldung.com/sql/storing-tree-in-rdb
-or use Dedicated Graph Database
-
-- improved front-end (not only list based, but view tree based)
-- CRUD and linking by performing UI operations, not solely based on buttons.
-
-Future
-- authorization.
-- view other user family.
-- add user to family and merge families.
-- possibility to add one photo for each familly member.
-- consider read-model in elasticsearch.
-"""
