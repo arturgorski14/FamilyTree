@@ -364,7 +364,7 @@ def test_marry_divorce_then_marry_again(db):
     assert second_wife.current_spouse == husband
 
 
-def test_cant_divorce_when_dont_have_spouse():
+def test_cant_divorce_when_dont_have_spouse(db):
     man = create_and_save_man()
     woman = create_and_save_woman()
 
@@ -375,8 +375,9 @@ def test_cant_divorce_when_dont_have_spouse():
         woman.divorce()
 
 
-def test_overlaping_mariage():
+def test_overlaping_mariage(db):
     man = create_and_save_man()
+    raise NotImplementedError
 """
 Features TODO:
 - tree based structure

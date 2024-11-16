@@ -15,7 +15,6 @@
       <th>Number of children</th>
       <th>Father</th>
       <th>Mother</th>
-      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -65,10 +64,6 @@
         {% else %}
             -
         {% endif %}
-      </td>
-      <td class="actions">
-        {% include "edit_button.html" %}
-        {% include "delete_button.html" %}
       </td>
     </tr>
     {% empty %}
