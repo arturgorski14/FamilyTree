@@ -14,11 +14,12 @@ def display_family_member(member: Member, title):
         url = reverse("members:details", args=[member.pk])
         html_output = f'<div class="member-{title.lower()}">{title}: <br><a href="{url}">{member}</a></div>'
     else:
+        lowered_title = title.lower()
         plural_title = (
-            f"{title}s" if title.lower() != "child" else "children"
+            f"{title}s" if lowered_title != "child" else "children"
         )  # TODO: fix for grandchildren
         html_output = (
-            f'<div class="member-{plural_title}">No {plural_title} listed.</div>'
+            f'<div class="member-{lowered_title}">No {plural_title} listed.</div>'
         )
 
     return mark_safe(html_output)
@@ -44,7 +45,7 @@ def display_family_members_list(members, title):
             case _:
                 plural_title = f"{lowered_title}s"
         html_output = (
-            f'<div class="member-{plural_title}">No {plural_title} listed.</div>'
+            f'<div class="member-{lowered_title}">No {plural_title} listed.</div>'
         )
 
     return mark_safe(html_output)
