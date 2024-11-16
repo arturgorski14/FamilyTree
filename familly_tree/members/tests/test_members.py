@@ -3,7 +3,9 @@ from django.core.exceptions import ValidationError
 from freezegun import freeze_time
 
 from members.models import Member
-from members.tests.factories import MemberFactory, create_and_save_man, create_and_save_woman, create_and_save_member
+from members.tests.factories import (MemberFactory, create_and_save_man,
+                                     create_and_save_member,
+                                     create_and_save_woman)
 
 
 def test_create_default_member(db):
@@ -376,8 +378,9 @@ def test_cant_divorce_when_dont_have_spouse(db):
 
 
 def test_overlaping_mariage(db):
-    man = create_and_save_man()
     raise NotImplementedError
+
+
 """
 Features TODO:
 - tree based structure

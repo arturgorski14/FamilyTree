@@ -86,11 +86,11 @@ class Member(models.Model):
         father_filter = Q(father__isnull=False, father=self.father)
         mother_filter = Q(mother__isnull=False, mother=self.mother)
         return Member.objects.filter(father_filter | mother_filter).exclude(id=self.pk)
-    
+
     @property
     def current_spouse(self):
         raise NotImplementedError
-    
+
     @property
     def ex_spouses(self):
         raise NotImplementedError
