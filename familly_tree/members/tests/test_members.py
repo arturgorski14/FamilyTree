@@ -343,42 +343,53 @@ def test_siblings_property_no_parent_set(db):
 
 
 def test_marry_divorce_then_marry_again(db):
-    husband = create_and_save_man()
-    wife = create_and_save_woman()
+    husband = create_and_save_man(firstname="Joe", lastname="Doe")
+    wife = create_and_save_woman(firstname="Jane", lastname="Doe")
 
-    husband.marry(wife, "2020-04-15")
-    assert husband.current_spouse == wife
-    assert wife.current_spouse == husband
+    husband.marry(wife)
+    assert list(husband.spouses) == [wife]
+    assert (
+        list(husband.spouses[0].married) is True
+    ), f"{husband} should be married with {wife}"
+    assert list(wife.spouses) == [husband]
+    assert (
+        list(wife.spouses[0].married) is True
+    ), f"{wife} should be married with {husband}"
 
-    second_wife = create_and_save_woman()
-
+    second_wife = create_and_save_woman(firstname="Alicia", lastname="Wonder")
     with pytest.raises(ValidationError):  # member is already! married
         husband.marry(second_wife)
 
-    husband.divorce("2022-12-29")
-    assert husband.current_spouse is None
-    assert husband.ex_spouses == [wife]
-    assert wife.current_spouse is None
-    assert wife.ex_spouses == [husband]
-
+    husband.divorce()
     husband.marry(second_wife)
-    assert husband.current_spouse == second_wife
-    assert second_wife.current_spouse == husband
+
+    assert list(husband.spouses) == [wife, second_wife]
+    assert (
+        list(husband.spouses[0].married) is False
+    ), f"{husband} should be divorced with {wife}"
+    assert (
+        list(husband.spouses[1].married) is True
+    ), f"{husband} should be married with {second_wife}"
+    assert list(wife.spouses[0].married) is False, f"{husband} divorced {wife}"
+    assert list(second_wife.spouses) == [husband]
+    assert (
+        list(second_wife.spouses[0].married) is True
+    ), f"{second_wife} should be {husband} second wife"
 
 
-def test_cant_divorce_when_dont_have_spouse(db):
+def test_cant_divorce_when_is_not_married(db):
     man = create_and_save_man()
     woman = create_and_save_woman()
 
-    with pytest.raises(ValidationError, match=f"{man} has noone to divorce!"):
+    with pytest.raises(
+        ValidationError, match=f"{man} can't divorce because he is single!"
+    ):
         man.divorce()
 
-    with pytest.raises(ValidationError, match=f"{woman} has noone to divorce!"):
+    with pytest.raises(
+        ValidationError, match=f"{woman} can't divorce because she is single!"
+    ):
         woman.divorce()
-
-
-def test_overlaping_mariage(db):
-    raise NotImplementedError
 
 
 """

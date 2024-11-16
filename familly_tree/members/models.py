@@ -82,7 +82,7 @@ class Member(models.Model):
         return Member.objects.filter(query_filter)
 
     @property
-    def spouses(self) -> list["Member"]:
+    def spouses(self) -> QuerySet["Member"]:
         raise NotImplementedError
 
     @property
@@ -222,9 +222,10 @@ class Member(models.Model):
             return None
 
 
-class MartialRelationship(models.Model):
-    """
-    Class used to track current, and previous marriages.
-    married=True - 2 people are maried with each other.
-    married=False - 2 people are divorced with each other.
-    """
+#
+# class MartialRelationship(models.Model):
+#     """
+#     Class used to track current, and previous marriages.
+#     married=True - 2 people are maried with each other.
+#     married=False - 2 people are divorced with each other.
+#     """
