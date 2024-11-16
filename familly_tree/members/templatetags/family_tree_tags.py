@@ -8,19 +8,26 @@ register = template.Library()
 
 
 @register.simple_tag
-def display_family_member(member: Member, title):
-    """Display a single family member with a link, or a default message if not available."""
+def display_family_member(member, title, link_url=None):
+    """
+    Display a single family member with a link, or a button to add/link if not available.
+    :param member: The family member object or None
+    :param title: The title (e.g., 'Father', 'Grandfather')
+    :param link_url: The URL to link a missing family member (if any)
+    """
     if member:
-        url = reverse("members:details", args=[member.pk])
+        url = reverse('members:details', args=[member.id])
         html_output = f'<div class="member-{title.lower()}">{title}: <br><a href="{url}">{member}</a></div>'
     else:
-        lowered_title = title.lower()
-        plural_title = (
-            f"{title}s" if lowered_title != "child" else "children"
-        )  # TODO: fix for grandchildren
-        html_output = (
-            f'<div class="member-{lowered_title}">No {plural_title} listed.</div>'
+        # Display a button if the member is missing
+        button_html = (
+            f'<div class="member-{title.lower()}">'
+            f'<form method="get" action="{link_url}">'
+            f'<button type="submit" class="link-button">Link {title}</button>'
+            f'</form>'
+            f'</div>'
         )
+        html_output = button_html if link_url else f'<div class="member-{title.lower()}">No {title.lower()} listed.</div>'
 
     return mark_safe(html_output)
 

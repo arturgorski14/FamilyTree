@@ -65,6 +65,7 @@ def test_display_family_member_with_no_member():
     # )
     expected_output = '<div class="member-father">No Fathers listed.</div>\n'
     rendered = render_template(template, {"member": None})
+    breakpoint()
     assert expected_output in rendered
 
 
