@@ -6,17 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b33e0e68-846c-4bd1-9872-41eeb1fa84da" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/members/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/all_members.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/all_members.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/choose_child.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/choose_child.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templates/details.html" beforeDir="false" afterPath="$PROJECT_DIR$/members/templates/details.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/templatetags/family_tree_tags.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/templatetags/family_tree_tags.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/members/tests/test_members.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/tests/test_members.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/tests/test_templatetags.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/tests/test_templatetags.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/members/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/members/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -52,8 +52,12 @@ class Member(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean()
+        self.firstname = self.firstname.capitalize()
+        self.lastname = self.lastname.capitalize()
         if not self.family_name:
             self.family_name = self.lastname
+        else:
+            self.family_name = self.family_name.capitalize()
         super().save(*args, **kwargs)
 
     @property

@@ -34,6 +34,14 @@ def test_create_default_member(db):
         ), f"Expected {key} to be {value}, but got {member_value}"
 
 
+def test_create_member_with_weird_capitalization(db):
+    member = create_and_save_member(firstname="JOHnny", lastname="walker", family_name="sMiTh")
+
+    assert member.firstname == "Johnny"
+    assert member.lastname == "Walker"
+    assert member.family_name == "Smith"
+
+
 def test_link_non_existent_father_id(db):
     member = MemberFactory(father_id=999)
 
