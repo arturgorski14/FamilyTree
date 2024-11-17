@@ -1,8 +1,9 @@
 # HIGHEST PRIORITY
-## Spouse CRUD
 
 # HIGH PRIORITY
 ## Link/Create members using tree-view in details
+## Improve views redability
+## Redesign styles, template_tags and html in more organized manner
 
 # MEDIUM PRIORITY
 ## Tree based structure for all members at once (can be done as version expandable by user)
