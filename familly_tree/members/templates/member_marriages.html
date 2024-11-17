@@ -1,0 +1,33 @@
+{% extends "master.html" %}
+
+{% block title %}
+<h1>Marriages for {{ member }}</h1>
+{% endblock %}
+
+{% block content %}
+<h2>Current Spouses</h2>
+{% for marriage in marriages %}
+    {% if marriage.married %}
+        <p>
+            {{ marriage.spouse }} - Married
+            <a href="{% url 'members:divorce_member' member.id marriage.spouse.id %}">Divorce</a>
+        </p>
+    {% endif %}
+{% empty %}
+    <p>No current spouses.</p>
+{% endfor %}
+
+<h2>Past Spouses</h2>
+{% for marriage in marriages %}
+    {% if not marriage.married %}
+        <p>{{ marriage.spouse }} - Divorced</p>
+    {% endif %}
+{% empty %}
+    <p>No past spouses.</p>
+{% endfor %}
+
+<p><a href="{% url 'members:marry_member_form' member.id %}" class="btn btn-primary">Add New Marriage</a></p>
+
+<p><a href="{% url 'members:details' member.id %}">Go back to {{ member }}</a></p>
+
+{% endblock %}

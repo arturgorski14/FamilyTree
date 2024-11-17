@@ -1,10 +1,17 @@
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.urls import reverse_lazy, reverse
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
-from .forms import MemberForm
-from .models import Member
+from .forms import MemberForm, MarryMemberForm
+from .models import Member, MartialRelationship
 
 
 class AllMembers(ListView):
@@ -92,3 +99,54 @@ def add_child_to_parent(request, parent_id, child_id):
 
     # Redirect back to the parent details page
     return redirect("members:details", parent_id)
+
+
+class MemberMarriagesView(ListView):
+    model = MartialRelationship
+    template_name = "member_marriages.html"
+    context_object_name = "marriages"
+
+    def get_queryset(self):
+        member_id = self.kwargs["member_id"]
+        return MartialRelationship.objects.filter(member_id=member_id).select_related("spouse")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["member"] = get_object_or_404(Member, pk=self.kwargs["member_id"])
+        return context
+
+
+class MarryMemberCreateView(CreateView):
+    model = MartialRelationship
+    fields = ["spouse"]
+    template_name = "marry_member_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["member_id"] = self.kwargs["member_id"]
+        return context
+
+    def form_valid(self, form):
+        member = get_object_or_404(Member, pk=self.kwargs["member_id"])
+        spouse = form.cleaned_data["spouse"]
+
+        MartialRelationship.marry(member, spouse)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse("members:member_marriages", kwargs={"member_id": self.kwargs["member_id"]})
+
+
+def marry_member(request, member_id, spouse_id):
+    member = get_object_or_404(Member, pk=member_id)
+    spouse = get_object_or_404(Member, pk=spouse_id)
+    MartialRelationship.marry(member, spouse)
+    return redirect("members:member_marriages", member_id=member_id)
+
+
+def divorce_member(request, member_id, spouse_id):
+    member = get_object_or_404(Member, pk=member_id)
+    spouse = get_object_or_404(Member, pk=spouse_id)
+    MartialRelationship.divorce(member, spouse)
+    return redirect("members:member_marriages", member_id=member_id)

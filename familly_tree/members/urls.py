@@ -21,4 +21,20 @@ urlpatterns = [
         views.add_child_to_parent,
         name="add_child_to_parent",
     ),
+    path(f"{app_name}/<int:member_id>/marriages/", views.MemberMarriagesView.as_view(), name="member_marriages"),
+    path(
+        f"{app_name}/<int:member_id>/marry/",
+        views.MarryMemberCreateView.as_view(),
+        name="marry_member_form",
+    ),
+    path(
+        f"{app_name}/<int:member_id>/marry/<int:spouse_id>/",
+        views.marry_member,
+        name="marry_member",
+    ),
+    path(
+        f"{app_name}/<int:member_id>/divorce/<int:spouse_id>/",
+        views.divorce_member,
+        name="divorce_member",
+    ),
 ]

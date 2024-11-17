@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Member
+from .models import Member, MartialRelationship
 
 
 # Register your models here.
@@ -13,4 +13,9 @@ class MemberAdmin(admin.ModelAdmin):
     )
 
 
+class MartialRelationshipAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Member, MemberAdmin)
+admin.site.register(MartialRelationship, MartialRelationshipAdmin)

@@ -28,6 +28,8 @@
         </ul>
         <p><a href="{% url 'members:choose_child' member.id %}">Add an existing child</a></p>
 
+        <p><a href="{% url 'members:member_marriages' member.id %}">Marriages</a></p>
+
 
         {% if member.father_id %}
             <p>Father: <a href="{% url 'members:details' member.father_id %}">{{ member.father }}</a></p>

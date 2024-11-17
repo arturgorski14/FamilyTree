@@ -3,8 +3,11 @@ from django.template import Context, Template
 from django.urls import reverse
 
 from members.models import Member
-from members.tests.factories import (MemberFactory, create_and_save_man,
-                                     create_and_save_woman)
+from members.tests.factories import (
+    MemberFactory,
+    create_and_save_man,
+    create_and_save_woman,
+)
 
 
 @pytest.fixture

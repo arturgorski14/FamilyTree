@@ -1,0 +1,15 @@
+{% extends "master.html" %}
+
+{% block title %}
+<h1>Add a New Marriage for {{ member }}</h1>
+{% endblock %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'members:member_marriages' member_id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

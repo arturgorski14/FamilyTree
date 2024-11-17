@@ -48,7 +48,7 @@ def display_family_member_spouses(member):  # TODO: write tests!
             spouse = spouse_data.spouse
             married = spouse_data.married
             url = reverse("members:details", args=[spouse.pk])
-            title = "Spouse" if married else "Ex-spouse"
+            title = "Spouse"
             if married:
                 items.append(
                     f'<div class="{class_name}">{title.title()}: <br><a href="{url}">{spouse}</a></div>'

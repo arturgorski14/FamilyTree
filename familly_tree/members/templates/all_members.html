@@ -3,12 +3,16 @@
 {% block title %}<h1>Members</h1>{% endblock %}
 
 {% block content %}
+
+{% include "add_button.html" %}
+
 <table class="members-table">
   <thead>
     <tr>
       <th>Id</th>
       <th>Name</th>
       <th>Family Name</th>
+      <th>Spouse</th>
       <th>Sex</th>
       <th>Age</th>
       <th>Alive?</th>
@@ -30,6 +34,14 @@
       </td>
       <td>
         {{ member.family_name }}
+      </td>
+      <td>
+
+        {% if member.current_spouse %}
+            <a href="{% url 'members:details' member.current_spouse.pk %}" >{{ member.current_spouse }}</a>
+        {% else %}
+            -
+        {% endif %}
       </td>
       <td>
         {% if member.sex == 'm' %}

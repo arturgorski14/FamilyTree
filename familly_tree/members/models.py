@@ -98,6 +98,14 @@ class Member(models.Model):
         """Return all the spouses."""
         return MartialRelationship.spouses(self)
 
+    @property
+    def current_spouse(self) -> Optional["Member"]:
+        current_spouse = [spouse_data.spouse for spouse_data in self.spouses if spouse_data.married]
+        if current_spouse:
+            return current_spouse[0]
+        else:
+            return None
+
     def _validate_dates(self) -> None:
         if self.birth_date:
             try:
@@ -259,7 +267,6 @@ class MartialRelationship(models.Model):
             raise ValidationError(
                 f"Impossible marriage because {spouse} is already married."
             )
-
         MartialRelationship.objects.create(member=member, spouse=spouse, married=True)
         MartialRelationship.objects.create(member=spouse, spouse=member, married=True)
 

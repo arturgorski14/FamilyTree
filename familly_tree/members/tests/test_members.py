@@ -4,9 +4,12 @@ from django.urls import reverse
 from freezegun import freeze_time
 
 from members.models import MartialRelationship, Member, SpouseData
-from members.tests.factories import (MemberFactory, create_and_save_man,
-                                     create_and_save_member,
-                                     create_and_save_woman)
+from members.tests.factories import (
+    MemberFactory,
+    create_and_save_man,
+    create_and_save_member,
+    create_and_save_woman,
+)
 
 
 def test_create_default_member(db):
@@ -500,3 +503,70 @@ def test_married_multiple_times(db):
     assert second_wife.spouses == [
         SpouseData(husband, True)
     ], f"{second_wife} should be married with {husband}"
+
+
+@pytest.mark.django_db
+def test_views_marry_member_success(client):
+    """Test for successful marriage between two members."""
+    man = create_and_save_man()
+    woman = create_and_save_woman()
+
+    assert MartialRelationship.objects.count() == 0, f"{MartialRelationship.objects.all()}"
+
+    url = reverse('members:marry_member', kwargs={'member_id': man.pk, 'spouse_id': woman.pk})
+    response = client.get(url)
+
+    # Check the response status is 302 (redirect)
+    assert response.status_code == 302
+
+    # Check that a marriage relationship was created
+    assert MartialRelationship.objects.filter(member=man, spouse=woman, married=True).exists()
+    assert MartialRelationship.objects.filter(member=woman, spouse=man, married=True).exists()
+
+    assert MartialRelationship.objects.count() == 2, f"{MartialRelationship.objects.all()}"
+
+
+@pytest.mark.django_db
+def test_views_marry_member_same_sex(client):
+    """Test that same-sex marriage raises a ValidationError."""
+    man = create_and_save_man()
+    woman = create_and_save_woman()
+
+    url = reverse('members:marry_member', kwargs={'member_id': man.pk, 'spouse_id': woman.pk})
+    response = client.get(url)
+
+    # Check for validation error in the response
+    assert response.status_code == 400  # Assuming you handle validation errors with a 400 response
+    assert "Same sex marriages are not allowed" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_views_marry_member_already_married(client):
+    """Test that a member who is already married cannot marry another person."""
+    member_1 = create_and_save_woman()
+    member_2 = create_and_save_man()
+    # Make member_1 already married to someone else
+    member_3 = create_and_save_man()
+    MartialRelationship.marry(member_1, member_3)
+
+    # Try to marry member_1 and member_2 (should fail)
+    url = reverse('members:marry_member', kwargs={'member_id': member_1.pk, 'spouse_id': member_2.pk})
+    response = client.get(url)
+
+    # Check for validation error in the response
+    assert response.status_code == 400
+    assert f"Impossible marriage because {member_1} is already married." in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_views_marry_member_to_self(client):
+    """Test that a member cannot marry themselves."""
+    member_1 = create_and_save_member()
+
+    url = reverse('members:marry_member', kwargs={'member_id': member_1.pk, 'spouse_id': member_1.pk})
+    response = client.get(url)
+
+    # Check for validation error in the response
+    assert response.status_code == 400
+    assert f"{member_1} cannot marry themselves." in response.content.decode()
+
