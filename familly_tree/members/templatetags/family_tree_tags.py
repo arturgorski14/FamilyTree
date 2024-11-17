@@ -16,7 +16,7 @@ def display_family_member(member, title, link_url=None):
     :param link_url: The URL to link a missing family member (if any)
     """
     if member:
-        url = reverse("members:details", args=[member.id])
+        url = reverse("members:details", args=[member.pk])
         html_output = f'<div class="member-{title.lower()}">{title}: <br><a href="{url}">{member}</a></div>'
     else:
         # Display a button if the member is missing
@@ -33,6 +33,33 @@ def display_family_member(member, title, link_url=None):
             else f'<div class="member-{title.lower()}">No {title.lower()} listed.</div>'
         )
 
+    return mark_safe(html_output)
+
+
+@register.simple_tag
+def display_family_member_spouses(member):  # TODO: write tests!
+    class_name = "member-spouse"
+    plural_title = "spouses"
+    title = "spouse"
+
+    if member.spouses:
+        items = []
+        for spouse_data in member.spouses:
+            spouse = spouse_data.spouse
+            married = spouse_data.married
+            url = reverse("members:details", args=[spouse.pk])
+            title = "Spouse" if married else "Ex-spouse"
+            if married:
+                items.append(
+                    f'<div class="{class_name}">{title.title()}: <br><a href="{url}">{spouse}</a></div>'
+                )
+            else:
+                items.append(
+                    f'<div class="{class_name}">Ex-{title}: <br><a href="{url}">{spouse}</a></div>'
+                )
+        html_output = "".join(items)
+    else:
+        html_output = f'<div class="{class_name}">No {plural_title} listed.</div>'
     return mark_safe(html_output)
 
 
@@ -69,6 +96,6 @@ def map(value, arg):
 
 
 @register.filter
-def sum(value):
+def flatten(value):
     """Flattens a list of lists into a single list."""
     return [item for sublist in value for item in sublist]

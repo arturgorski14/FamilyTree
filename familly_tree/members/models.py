@@ -4,7 +4,7 @@ from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, QuerySet, Prefetch
+from django.db.models import Prefetch, Q, QuerySet
 
 
 class Member(models.Model):
@@ -230,8 +230,13 @@ class MartialRelationship(models.Model):
     married=True - Two members are married.
     married=False - Two members are divorced.
     """
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="martialrelationship")
-    spouse = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="spouse_relationships")
+
+    member = models.ForeignKey(
+        Member, on_delete=models.CASCADE, related_name="martialrelationship"
+    )
+    spouse = models.ForeignKey(
+        Member, on_delete=models.CASCADE, related_name="spouse_relationships"
+    )
     married = models.BooleanField(default=True)
 
     @staticmethod
@@ -243,7 +248,17 @@ class MartialRelationship(models.Model):
     def marry(member: Member, spouse: Member):
         """Marry a spouse."""
         if member == spouse:
-            raise ValueError("A member cannot marry themselves.")
+            raise ValidationError(f"{member} cannot marry themselves.")
+        if member.sex == spouse.sex:
+            raise ValidationError("Same sex marriages are not allowed")
+        if any(s.married for s in member.spouses):
+            raise ValidationError(
+                f"Impossible marriage because {member} is already married."
+            )
+        if any(s.married for s in spouse.spouses):
+            raise ValidationError(
+                f"Impossible marriage because {spouse} is already married."
+            )
 
         MartialRelationship.objects.create(member=member, spouse=spouse, married=True)
         MartialRelationship.objects.create(member=spouse, spouse=member, married=True)
@@ -251,8 +266,12 @@ class MartialRelationship(models.Model):
     @staticmethod
     def divorce(member: Member, spouse: "Member"):
         """Divorce a spouse."""
-        MartialRelationship.objects.filter(member=member, spouse=spouse, married=True).update(married=False)
-        MartialRelationship.objects.filter(member=spouse, spouse=member, married=True).update(married=False)
+        MartialRelationship.objects.filter(
+            member=member, spouse=spouse, married=True
+        ).update(married=False)
+        MartialRelationship.objects.filter(
+            member=spouse, spouse=member, married=True
+        ).update(married=False)
 
     def __str__(self):
         return f"{self.member} and {self.spouse} are{' not' if not self.married else ''} married"

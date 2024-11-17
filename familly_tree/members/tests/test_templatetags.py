@@ -3,6 +3,8 @@ from django.template import Context, Template
 from django.urls import reverse
 
 from members.models import Member
+from members.tests.factories import (MemberFactory, create_and_save_man,
+                                     create_and_save_woman)
 
 
 @pytest.fixture
@@ -10,11 +12,9 @@ def create_family(db):
     """
     Fixture to create sample family data for testing.
     """
-    father = Member.objects.create(id=1, firstname="John", lastname="Doe")
-    child = Member.objects.create(id=2, firstname="Jane", lastname="Doe", father=father)
-    grandchild = Member.objects.create(
-        id=3, firstname="Jack", lastname="Doe", father=child
-    )
+    father = create_and_save_man(firstname="John", lastname="Doe")
+    child = create_and_save_man(firstname="James", lastname="Doe", father=father)
+    grandchild = create_and_save_man(firstname="Jack", lastname="Doe", father=child)
     return father, child, grandchild
 
 
@@ -36,7 +36,7 @@ def test_display_family_member_with_member(create_family):
         {% load family_tree_tags %}
         {% display_family_member member "Father" %}
     """
-    url = reverse("members:details", args=[father.id])
+    url = reverse("members:details", args=[father.pk])
     expected_output = (
         f'<div class="member-father">Father: <br><a href="{url}">John Doe</a></div>'
     )
@@ -72,9 +72,9 @@ def test_display_family_members_list(create_family):
         {% load family_tree_tags %}
         {% display_family_members_list children "Child" %}
     """
-    url = reverse("members:details", args=[child.id])
+    url = reverse("members:details", args=[child.pk])
     expected_output = (
-        f'<div class="member-child">Child: <br><a href="{url}">Jane Doe</a></div>'
+        f'<div class="member-child">Child: <br><a href="{url}">James Doe</a></div>'
     )
     rendered = render_template(template, {"children": [child]})
     assert expected_output in rendered

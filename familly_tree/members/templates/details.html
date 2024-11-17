@@ -28,7 +28,6 @@
         </ul>
         <p><a href="{% url 'members:choose_child' member.id %}">Add an existing child</a></p>
 
-        <p><a href="{% url 'members:member_marriages' member.id %}">Marriages</a></p>
 
         {% if member.father_id %}
             <p>Father: <a href="{% url 'members:details' member.father_id %}">{{ member.father }}</a></p>
@@ -77,7 +76,8 @@
     </div>
 
     <div class="generation siblings">
-        <!-- TODO: In the future member.spouse here -->
+        {% display_family_member_spouses member %}
+
         <div class="member-primary">
         {% display_family_member member "Primary Member" %}
         </div>
@@ -91,7 +91,7 @@
 
     <div class="generation grandchildren">
         <!-- Gather all grandchildren -->
-        {% with grandchildren=member.children|map:"children"|sum %}
+        {% with grandchildren=member.children|map:"children"|flatten %}
         {% display_family_members_list grandchildren "Grandchild" %}
         {% endwith %}
     </div>
