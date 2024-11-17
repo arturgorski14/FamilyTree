@@ -1,9 +1,12 @@
 # HIGHEST PRIORITY
+## Order by DESC/ASC by clicking on the table header
+## Better search (idk if possible in current design)
 
 # HIGH PRIORITY
-## Link/Create members using tree-view in details
 ## Improve views redability
 ## Redesign styles, template_tags and html in more organized manner
+## Introduce aunt, uncle, cousins in details.html
+## Link/Create members using tree-view in details
 
 # MEDIUM PRIORITY
 ## Tree based structure for all members at once (can be done as version expandable by user)
