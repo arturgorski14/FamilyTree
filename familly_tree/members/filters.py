@@ -1,9 +1,10 @@
 from datetime import datetime
 
 import django_filters
-from django.db.models import Q, Count
+from django.db.models import Count, Q
 
 from .models import Member
+
 
 class MemberFilter(django_filters.FilterSet):
 
@@ -22,23 +23,21 @@ class MemberFilter(django_filters.FilterSet):
         choices=ALIVE_CHOICES, method="filter_alive", label="Alive"
     )
 
-    children_count_min = django_filters.NumberFilter(
-        method="filter_children_count", label="Min Number of Children"
-    )
-    children_count_max = django_filters.NumberFilter(
-        method="filter_children_count", label="Max Number of Children"
+    children_count_range = django_filters.RangeFilter(
+        method="filter_children_count_range", label="Number of Children Range"
     )
 
-    def filter_children_count(self, queryset, name, value):
-        # Annotating the queryset to count the children from both relations
+    def filter_children_count_range(self, queryset, name, value):
+        # Annotate queryset to count total children from both father and mother
         queryset = queryset.annotate(
             num_children=Count("children_father") + Count("children_mother")
         )
-
-        if name == "children_count_min":
-            return queryset.filter(num_children__gte=value)
-        elif name == "children_count_max":
-            return queryset.filter(num_children__lte=value)
+        if value:
+            min_value, max_value = value.start, value.stop
+            if min_value is not None:
+                queryset = queryset.filter(num_children__gte=min_value)
+            if max_value is not None:
+                queryset = queryset.filter(num_children__lte=max_value)
 
         return queryset
 
@@ -48,11 +47,13 @@ class MemberFilter(django_filters.FilterSet):
 
     class Meta:
         model = Member
-        fields = ["name", "sex", "alive", "children_count_min", "children_count_max"]
+        fields = ["name", "sex", "alive", "children_count_range"]
 
     def filter_name(self, queryset, name, value):
         return queryset.filter(
-            Q(firstname__icontains=value) | Q(lastname__icontains=value) | Q(family_name__icontains=value)
+            Q(firstname__icontains=value)
+            | Q(lastname__icontains=value)
+            | Q(family_name__icontains=value)
         )
 
     def filter_alive(self, queryset, name, value):
@@ -66,14 +67,12 @@ class MemberFilter(django_filters.FilterSet):
         # Filter by minimum age
         current_date = datetime.now().date()
         return queryset.filter(
-            birth_date__isnull=False,
-            birth_date__lte=str(current_date.year - value)
+            birth_date__isnull=False, birth_date__lte=str(current_date.year - value)
         )
 
     def filter_age_max(self, queryset, name, value):
         # Filter by maximum age
         current_date = datetime.now().date()
         return queryset.filter(
-            birth_date__isnull=False,
-            birth_date__gte=str(current_date.year - value)
+            birth_date__isnull=False, birth_date__gte=str(current_date.year - value)
         )
