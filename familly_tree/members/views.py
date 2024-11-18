@@ -9,17 +9,21 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django_filters.views import FilterView
 
 from .forms import MemberForm, MarryMemberForm
 from .models import Member, MartialRelationship
+from .filters import MemberFilter
 
 
-class AllMembers(ListView):
+class AllMembers(FilterView):
+    model = Member
     template_name = "all_members.html"
     context_object_name = "all_members"
+    filterset_class = MemberFilter
 
-    def get_queryset(self):
-        return Member.objects.all()
+    # def get_queryset(self):
+    #     return Member.objects.all()
 
 
 class Details(DetailView):

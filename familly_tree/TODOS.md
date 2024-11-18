@@ -1,6 +1,6 @@
 # HIGHEST PRIORITY
 ## Order by DESC/ASC by clicking on the table header
-## Better search (idk if possible in current design)
+## Search by age using property from Member class
 
 # HIGH PRIORITY
 ## Improve views redability

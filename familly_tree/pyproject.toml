@@ -11,6 +11,7 @@ django = "^5.1.2"
 pytest = "^8.3.3"
 pytest-django = "^4.9.0"
 whitenoise = "^6.8.2"
+django-filter = "^24.3"
 
 
 [tool.poetry.group.dev.dependencies]
