@@ -5,35 +5,7 @@
 {% block content %}
 
 <form method="get" action="">
-    <label for="id_name">Name:</label>
-    <input type="text" id="id_name" name="name" value="{{ request.GET.name|default:'' }}">
-
-    <label for="id_sex">Sex:</label>
-    <select id="id_sex" name="sex">
-        {% for value, label in filter.form.sex.field.choices %}
-        <option value="{{ value }}" {% if request.GET.sex == value %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-    </select>
-
-
-    <label for="id_alive">Alive:</label>
-    <select id="id_alive" name="alive">
-        {% for value, label in filter.form.alive.field.choices %}
-        <option value="{{ value }}" {% if request.GET.alive == value %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="id_children_count_min">Min Children:</label>
-    <input type="number" id="id_children_count_min" name="children_count_min" value="{{ request.GET.children_count_min|default:'' }}">
-
-    <label for="id_children_count_max">Max Children:</label>
-    <input type="number" id="id_children_count_max" name="children_count_max" value="{{ request.GET.children_count_max|default:'' }}">
-
-    <label for="id_age_min">Minimum Age:</label>
-    <input type="number" id="id_age_min" name="age_min" value="{{ request.GET.age_min|default:'' }}">
-
-    <label for="id_age_max">Maximum Age:</label>
-    <input type="number" id="id_age_max" name="age_max" value="{{ request.GET.age_max|default:'' }}">
+    {{ filter.form.as_p }}
 
     <button type="submit">Filter</button>
     <a href="{% url 'members:members' %}">Clear</a> <!-- Clear Filters -->

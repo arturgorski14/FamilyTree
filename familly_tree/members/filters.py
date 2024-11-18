@@ -23,11 +23,24 @@ class MemberFilter(django_filters.FilterSet):
     )
 
     children_count_min = django_filters.NumberFilter(
-        method="filter_children_count_min", label="Min Number of Children"
+        method="filter_children_count", label="Min Number of Children"
     )
     children_count_max = django_filters.NumberFilter(
-        method="filter_children_count_max", label="Max Number of Children"
+        method="filter_children_count", label="Max Number of Children"
     )
+
+    def filter_children_count(self, queryset, name, value):
+        # Annotating the queryset to count the children from both relations
+        queryset = queryset.annotate(
+            num_children=Count("children_father") + Count("children_mother")
+        )
+
+        if name == "children_count_min":
+            return queryset.filter(num_children__gte=value)
+        elif name == "children_count_max":
+            return queryset.filter(num_children__lte=value)
+
+        return queryset
 
     # TODO: use age property from member to calculate age
     age_min = django_filters.NumberFilter(method="filter_age_min", label="Minimum Age")
@@ -48,16 +61,6 @@ class MemberFilter(django_filters.FilterSet):
         elif value == "false":
             return queryset.filter(death_date__isnull=False)
         return queryset  # Return unchanged for "
-
-    def filter_children_count_min(self, queryset, name, value):
-        return queryset.annotate(
-            num_children=Count("children_father") + Count("children_mother")
-        ).filter(num_children__gte=value)
-
-    def filter_children_count_max(self, queryset, name, value):
-        return queryset.annotate(
-            num_children=Count("children_father") + Count("children_mother")
-        ).filter(num_children__lte=value)
 
     def filter_age_min(self, queryset, name, value):
         # Filter by minimum age
