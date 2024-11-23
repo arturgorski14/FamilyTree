@@ -104,9 +104,11 @@ class Member(models.Model):
 
     @property
     def current_spouse(self) -> Optional["Member"]:
-        current_spouse = [spouse_data.spouse for spouse_data in self.spouses if spouse_data.married]
-        if current_spouse:
-            return current_spouse[0]
+        current_spouses = [spouse_data.spouse for spouse_data in self.spouses if spouse_data.married]
+        if len(current_spouses) == 1:
+            return current_spouses[0]
+        elif len(current_spouses) > 1:
+            raise ValueError(f"{self} has more than 1 current spose! {current_spouses}")
         else:
             return None
 
@@ -277,6 +279,8 @@ class MartialRelationship(models.Model):
     @staticmethod
     def divorce(member: Member, spouse: "Member"):
         """Divorce a spouse."""
+        if member.current_spouse != spouse:
+            raise ValidationError(f"{member} cannot divorce with {spouse} because the are not married")
         MartialRelationship.objects.filter(
             member=member, spouse=spouse, married=True
         ).update(married=False)
