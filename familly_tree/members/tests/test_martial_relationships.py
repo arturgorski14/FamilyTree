@@ -33,6 +33,8 @@ def test_marriage_between_two_men(db):
 
     with pytest.raises(ValidationError, match="Same sex marriages are not allowed"):
         MartialRelationship.marry(man1, man2)
+    assert man1.current_spouse is None
+    assert man2.current_spouse is None
 
 
 def test_marriage_between_two_woman(db):
@@ -41,6 +43,8 @@ def test_marriage_between_two_woman(db):
 
     with pytest.raises(ValidationError, match="Same sex marriages are not allowed"):
         MartialRelationship.marry(woman1, woman2)
+    assert woman1.current_spouse is None
+    assert woman2.current_spouse is None
 
 
 def test_divorce(db):
@@ -52,6 +56,8 @@ def test_divorce(db):
 
     assert woman.spouses == [SpouseData(man, False)]
     assert man.spouses == [SpouseData(woman, False)]
+    assert woman.current_spouse is None
+    assert man.current_spouse is None
 
 
 def test_divorce_when_not_married(db):
@@ -73,6 +79,10 @@ def test_divorce_when_not_married(db):
     ):
         MartialRelationship.divorce(woman, man)
 
+    assert wife.current_spouse == man
+    assert man.current_spouse == wife
+    assert woman.current_spouse is None
+
 
 def test_second_marriage_with_the_same_person_after_divorce(db):
     man = create_and_save_man(firstname="Bob")
@@ -92,6 +102,8 @@ def test_second_marriage_with_the_same_person_after_divorce(db):
 
     assert man.spouses == [SpouseData(woman, False)]
     assert woman.spouses == [SpouseData(man, False)]
+    assert man.current_spouse is None
+    assert woman.current_spouse is None
 
 
 def test_second_marriage_with_the_same_person_without_divorce(db):
@@ -111,6 +123,8 @@ def test_second_marriage_with_the_same_person_without_divorce(db):
 
     assert man.spouses == [SpouseData(woman, True)]
     assert woman.spouses == [SpouseData(man, True)]
+    assert man.current_spouse == woman
+    assert woman.current_spouse == man
 
 
 def test_second_divorce_with_the_same_person(db):
@@ -130,6 +144,8 @@ def test_second_divorce_with_the_same_person(db):
         match=f"{woman} cannot divorce with {man} because the are not married",
     ):
         MartialRelationship.divorce(woman, man)
+    assert man.current_spouse is None
+    assert woman.current_spouse is None
 
 
 def test_married_multiple_times(db):
