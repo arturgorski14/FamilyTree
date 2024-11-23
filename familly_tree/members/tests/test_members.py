@@ -4,12 +4,9 @@ from django.urls import reverse
 from freezegun import freeze_time
 
 from members.models import MartialRelationship, Member, SpouseData
-from members.tests.factories import (
-    MemberFactory,
-    create_and_save_man,
-    create_and_save_member,
-    create_and_save_woman,
-)
+from members.tests.factories import (MemberFactory, create_and_save_man,
+                                     create_and_save_member,
+                                     create_and_save_woman)
 
 
 def test_create_default_member(db):
@@ -35,7 +32,9 @@ def test_create_default_member(db):
 
 
 def test_create_member_with_weird_capitalization(db):
-    member = create_and_save_member(firstname="JOHnny", lastname="walker", family_name="sMiTh")
+    member = create_and_save_member(
+        firstname="JOHnny", lastname="walker", family_name="sMiTh"
+    )
 
     assert member.firstname == "Johnny"
     assert member.lastname == "Walker"
@@ -353,25 +352,36 @@ def test_siblings_property_no_parent_set(db):
     assert list(member1.siblings) == []
     assert list(member2.siblings) == []
 
+
 @pytest.mark.django_db
 def test_views_marry_member_success(client):
     """Test for successful marriage between two members."""
     man = create_and_save_man()
     woman = create_and_save_woman()
 
-    assert MartialRelationship.objects.count() == 0, f"{MartialRelationship.objects.all()}"
+    assert (
+        MartialRelationship.objects.count() == 0
+    ), f"{MartialRelationship.objects.all()}"
 
-    url = reverse('members:marry_member', kwargs={'member_id': man.pk, 'spouse_id': woman.pk})
+    url = reverse(
+        "members:marry_member", kwargs={"member_id": man.pk, "spouse_id": woman.pk}
+    )
     response = client.get(url)
 
     # Check the response status is 302 (redirect)
     assert response.status_code == 302
 
     # Check that a marriage relationship was created
-    assert MartialRelationship.objects.filter(member=man, spouse=woman, married=True).exists()
-    assert MartialRelationship.objects.filter(member=woman, spouse=man, married=True).exists()
+    assert MartialRelationship.objects.filter(
+        member=man, spouse=woman, married=True
+    ).exists()
+    assert MartialRelationship.objects.filter(
+        member=woman, spouse=man, married=True
+    ).exists()
 
-    assert MartialRelationship.objects.count() == 2, f"{MartialRelationship.objects.all()}"
+    assert (
+        MartialRelationship.objects.count() == 2
+    ), f"{MartialRelationship.objects.all()}"
 
 
 @pytest.mark.django_db
@@ -380,11 +390,15 @@ def test_views_marry_member_same_sex(client):
     man = create_and_save_man()
     woman = create_and_save_woman()
 
-    url = reverse('members:marry_member', kwargs={'member_id': man.pk, 'spouse_id': woman.pk})
+    url = reverse(
+        "members:marry_member", kwargs={"member_id": man.pk, "spouse_id": woman.pk}
+    )
     response = client.get(url)
 
     # Check for validation error in the response
-    assert response.status_code == 400  # Assuming you handle validation errors with a 400 response
+    assert (
+        response.status_code == 400
+    )  # Assuming you handle validation errors with a 400 response
     assert "Same sex marriages are not allowed" in response.content.decode()
 
 
@@ -398,12 +412,18 @@ def test_views_marry_member_already_married(client):
     MartialRelationship.marry(member_1, member_3)
 
     # Try to marry member_1 and member_2 (should fail)
-    url = reverse('members:marry_member', kwargs={'member_id': member_1.pk, 'spouse_id': member_2.pk})
+    url = reverse(
+        "members:marry_member",
+        kwargs={"member_id": member_1.pk, "spouse_id": member_2.pk},
+    )
     response = client.get(url)
 
     # Check for validation error in the response
     assert response.status_code == 400
-    assert f"Impossible marriage because {member_1} is already married." in response.content.decode()
+    assert (
+        f"Impossible marriage because {member_1} is already married."
+        in response.content.decode()
+    )
 
 
 @pytest.mark.django_db
@@ -411,10 +431,12 @@ def test_views_marry_member_to_self(client):
     """Test that a member cannot marry themselves."""
     member_1 = create_and_save_member()
 
-    url = reverse('members:marry_member', kwargs={'member_id': member_1.pk, 'spouse_id': member_1.pk})
+    url = reverse(
+        "members:marry_member",
+        kwargs={"member_id": member_1.pk, "spouse_id": member_1.pk},
+    )
     response = client.get(url)
 
     # Check for validation error in the response
     assert response.status_code == 400
     assert f"{member_1} cannot marry themselves." in response.content.decode()
-

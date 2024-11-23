@@ -1,19 +1,14 @@
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy, reverse
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 from django_filters.views import FilterView
 
-from .forms import MemberForm, MarryMemberForm
-from .models import Member, MartialRelationship
 from .filters import MemberFilter
+from .forms import MarryMemberForm, MemberForm
+from .models import MartialRelationship, Member
 
 
 class AllMembers(FilterView):
@@ -112,7 +107,9 @@ class MemberMarriagesView(ListView):
 
     def get_queryset(self):
         member_id = self.kwargs["member_id"]
-        return MartialRelationship.objects.filter(member_id=member_id).select_related("spouse")
+        return MartialRelationship.objects.filter(member_id=member_id).select_related(
+            "spouse"
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -139,7 +136,9 @@ class MarryMemberCreateView(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse("members:member_marriages", kwargs={"member_id": self.kwargs["member_id"]})
+        return reverse(
+            "members:member_marriages", kwargs={"member_id": self.kwargs["member_id"]}
+        )
 
 
 def marry_member(request, member_id, spouse_id):

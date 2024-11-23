@@ -21,7 +21,11 @@ urlpatterns = [
         views.add_child_to_parent,
         name="add_child_to_parent",
     ),
-    path(f"{app_name}/<int:member_id>/marriages/", views.MemberMarriagesView.as_view(), name="member_marriages"),
+    path(
+        f"{app_name}/<int:member_id>/marriages/",
+        views.MemberMarriagesView.as_view(),
+        name="member_marriages",
+    ),
     path(
         f"{app_name}/<int:member_id>/marry/",
         views.MarryMemberCreateView.as_view(),

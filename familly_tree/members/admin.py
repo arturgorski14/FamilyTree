@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Member, MartialRelationship
+from .models import MartialRelationship, Member
 
 
 # Register your models here.

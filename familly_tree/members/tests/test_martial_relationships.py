@@ -2,7 +2,9 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from members.models import MartialRelationship, SpouseData
-from members.tests.factories import create_and_save_woman, create_and_save_man, create_and_save_member
+from members.tests.factories import (create_and_save_man,
+                                     create_and_save_member,
+                                     create_and_save_woman)
 
 
 def test_marriage(db):
@@ -13,6 +15,8 @@ def test_marriage(db):
 
     assert woman.spouses == [SpouseData(man, True)]
     assert man.spouses == [SpouseData(woman, True)]
+    assert man.current_spouse == woman
+    assert woman.current_spouse == man
 
 
 def test_marriage_with_yourself(db):
@@ -20,6 +24,7 @@ def test_marriage_with_yourself(db):
 
     with pytest.raises(ValidationError, match=f"{member} cannot marry themselves."):
         MartialRelationship.marry(member, member)
+    assert member.current_spouse is None
 
 
 def test_marriage_between_two_men(db):
@@ -95,12 +100,12 @@ def test_second_marriage_with_the_same_person_without_divorce(db):
     MartialRelationship.marry(woman, man)
 
     with pytest.raises(
-        ValidationError, match=f"{woman} and {man} are married already!"
+        ValidationError, match=f"Impossible marriage because {woman} is already married"
     ):
         MartialRelationship.marry(woman, man)
 
     with pytest.raises(
-        ValidationError, match=f"{man} and {woman} are married already!"
+        ValidationError, match=f"Impossible marriage because {man} is already married"
     ):
         MartialRelationship.marry(man, woman)
 

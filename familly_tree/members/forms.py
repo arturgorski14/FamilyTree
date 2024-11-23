@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Member, MartialRelationship
+from .models import MartialRelationship, Member
 
 
 class MemberForm(forms.ModelForm):
