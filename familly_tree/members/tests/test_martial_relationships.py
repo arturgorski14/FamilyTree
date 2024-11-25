@@ -89,21 +89,12 @@ def test_second_marriage_with_the_same_person_after_divorce(db):
     woman = create_and_save_woman(firstname="Alice")
     MartialRelationship.marry(man, woman)
     MartialRelationship.divorce(man, woman)
+    MartialRelationship.marry(man, woman)
 
-    with pytest.raises(
-        ValidationError, match=f"{woman} and {man} were married already!"
-    ):
-        MartialRelationship.marry(man, woman)
-
-    with pytest.raises(
-        ValidationError, match=f"{woman} and {man} were married already!"
-    ):
-        MartialRelationship.marry(woman, man)
-
-    assert man.spouses == [SpouseData(woman, False)]
-    assert woman.spouses == [SpouseData(man, False)]
-    assert man.current_spouse is None
-    assert woman.current_spouse is None
+    assert man.spouses == [SpouseData(woman, True)]
+    assert woman.spouses == [SpouseData(man, True)]
+    assert man.current_spouse == woman
+    assert woman.current_spouse == man
 
 
 def test_second_marriage_with_the_same_person_without_divorce(db):

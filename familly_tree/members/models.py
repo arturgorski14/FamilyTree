@@ -263,7 +263,7 @@ class MartialRelationship(models.Model):
         return [SpouseData(rel.spouse, rel.married) for rel in relationships]
 
     @staticmethod
-    def current_spouse(member: Member) -> Member:
+    def current_spouse(member: Member) -> Optional[Member]:
         spouse = MartialRelationship.objects.filter(member=member, married=True)
         return spouse
 
@@ -282,8 +282,20 @@ class MartialRelationship(models.Model):
             raise ValidationError(
                 f"Impossible marriage because {spouse} is already married."
             )
-        MartialRelationship.objects.create(member=member, spouse=spouse, married=True)
-        MartialRelationship.objects.create(member=spouse, spouse=member, married=True)
+        if any(1 for s in member.spouses if s.spouse == spouse):
+            MartialRelationship.objects.filter(
+                member=member, spouse=spouse, married=False
+            ).update(married=True)
+            MartialRelationship.objects.filter(
+                member=spouse, spouse=member, married=False
+            ).update(married=True)
+        else:
+            MartialRelationship.objects.create(
+                member=member, spouse=spouse, married=True
+            )
+            MartialRelationship.objects.create(
+                member=spouse, spouse=member, married=True
+            )
 
     @staticmethod
     def divorce(member: Member, spouse: "Member"):
