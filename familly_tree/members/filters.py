@@ -25,6 +25,10 @@ class MemberFilter(django_filters.FilterSet):
         method="filter_children_count_range", label="Number of Children Range"
     )
 
+    age_range = django_filters.RangeFilter(
+        method="filter_age_range", label="Age Range"
+    )
+
     def filter_children_count_range(self, queryset, name, value):
         queryset = queryset.annotate(
             num_children=Count("children_father") + Count("children_mother")
@@ -38,8 +42,15 @@ class MemberFilter(django_filters.FilterSet):
 
         return queryset
 
-    age_min = django_filters.NumberFilter(method="filter_age_min", label="Minimum Age")
-    age_max = django_filters.NumberFilter(method="filter_age_max", label="Maximum Age")
+    def filter_age_range(self, queryset, name, value):
+        if value:
+            min_value, max_value = value.start, value.stop
+            if min_value is not None:
+                queryset = queryset.filter(cached_age__gte=min_value)
+            if max_value is not None:
+                queryset = queryset.filter(cached_age__lte=max_value)
+
+        return queryset
 
     class Meta:
         model = Member

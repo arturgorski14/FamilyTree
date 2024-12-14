@@ -90,11 +90,11 @@ class TestMemberFilter:
         assert list(filtered_max) == sample_data[1:]
 
     def test_filter_age_min(self, sample_data):
-        filter_min_age = MemberFilter({"age_min": 30}, queryset=Member.objects.all())
+        filter_min_age = MemberFilter({"age_range_min": 30}, queryset=Member.objects.all())
         filtered_min_age = filter_min_age.qs.order_by("id")
         assert list(filtered_min_age) == [sample_data[0], sample_data[1], sample_data[3]]
 
     def test_filter_age_max(self, sample_data):
-        filter_max_age = MemberFilter({"age_max": 30}, queryset=Member.objects.all())
+        filter_max_age = MemberFilter({"age_range_max": 30}, queryset=Member.objects.all())
         filtered_max_age = filter_max_age.qs.order_by("id")
         assert list(filtered_max_age) == [sample_data[0], sample_data[2], sample_data[4]]
