@@ -15,29 +15,43 @@ from members.tests.factories import (create_and_save_man,
 class TestMemberFilter:
     @pytest.fixture
     def sample_data(self):
-        member1 = create_and_save_man(
+        member0 = create_and_save_man(
             firstname="John",
             lastname="Doe",
             family_name="Smith",
-            birth_date=datetime.now().date() - timedelta(days=365 * 30),
+            birth_date="1994",
             death_date=None,
         )
-        member2 = create_and_save_woman(
+        member1 = create_and_save_woman(
             firstname="Jane",
             lastname="Doe",
             family_name="Smith",
-            birth_date=datetime.now().date() - timedelta(days=365 * 50),
-            death_date=datetime.now().date() - timedelta(days=365 * 2),
+            birth_date="1974",
+            death_date="2022",
         )
-        member3 = create_and_save_woman(
+        member2 = create_and_save_woman(
             firstname="Alice",
             lastname="Johnson",
             family_name="Taylor",
-            birth_date=datetime.now().date() - timedelta(days=365 * 20),
+            birth_date="2004",
             death_date=None,
         )
-        member1.children_father.add(member3)
-        return [member1, member2, member3]
+        # member3 = create_and_save_woman(
+        #     firstname="Chistina",
+        #     lastname="Swift",
+        #     family_name="Taylor",
+        #     birth_date=datetime.now().date() - timedelta(days=365 * 20),
+        #     death_date=None,
+        # )
+        # member4 = create_and_save_man(
+        #     firstname="Neil",
+        #     lastname="Swift",
+        #     family_name="Swift",
+        #     birth_date=datetime.now().date() - timedelta(days=365 * 20),
+        #     death_date=None,
+        # )
+        member0.children_father.add(member2)
+        return [member0, member1, member2]
 
     def test_filter_name(self, sample_data):
         filter = MemberFilter({"name": "Doe"}, queryset=Member.objects.all())
