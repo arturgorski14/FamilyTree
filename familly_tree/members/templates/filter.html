@@ -1,0 +1,6 @@
+<form method="get" action="">
+    {{ filter.form.as_p }}
+
+    <button type="submit">Filter</button>
+    <a href="{% url 'members:members' %}">Clear</a> <!-- Clear Filters -->
+</form>

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import django_filters
 from django.db.models import Count, Q
 
@@ -28,7 +26,6 @@ class MemberFilter(django_filters.FilterSet):
     )
 
     def filter_children_count_range(self, queryset, name, value):
-        # Annotate queryset to count total children from both father and mother
         queryset = queryset.annotate(
             num_children=Count("children_father") + Count("children_mother")
         )
@@ -41,7 +38,6 @@ class MemberFilter(django_filters.FilterSet):
 
         return queryset
 
-    # TODO: use age property from member to calculate age
     age_min = django_filters.NumberFilter(method="filter_age_min", label="Minimum Age")
     age_max = django_filters.NumberFilter(method="filter_age_max", label="Maximum Age")
 
