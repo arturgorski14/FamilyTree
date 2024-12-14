@@ -17,8 +17,8 @@ class AllMembers(FilterView):
     context_object_name = "all_members"
     filterset_class = MemberFilter
 
-    # def get_queryset(self):
-    #     return Member.objects.all()
+    def get_queryset(self):
+        return Member.objects.all()
 
 
 class Details(DetailView):

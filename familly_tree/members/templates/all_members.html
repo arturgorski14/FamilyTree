@@ -20,13 +20,15 @@
       <th>Id</th>
       <th>Name</th>
       <th>Family Name</th>
-      <th>Spouse</th>
+<!--      <th>Spouse</th>-->
       <th>Sex</th>
+      <th>Birthday</th>
       <th>Age</th>
       <th>Alive?</th>
+      <th>Death date</th>
       <th>Number of children</th>
-      <th>Father</th>
-      <th>Mother</th>
+<!--      <th>Father</th>-->
+<!--      <th>Mother</th>-->
     </tr>
   </thead>
   <tbody>
@@ -43,14 +45,14 @@
       <td>
         {{ member.family_name }}
       </td>
-      <td>
+<!--      <td>-->
 
-        {% if member.current_spouse %}
-            <a href="{% url 'members:details' member.current_spouse.pk %}" >{{ member.current_spouse }}</a>
-        {% else %}
-            -
-        {% endif %}
-      </td>
+<!--        {% if member.current_spouse %}-->
+<!--            <a href="{% url 'members:details' member.current_spouse.pk %}" >{{ member.current_spouse }}</a>-->
+<!--        {% else %}-->
+<!--            - -->
+<!--        {% endif %}-->
+<!--      </td>-->
       <td>
         {% if member.sex == 'm' %}
           Male
@@ -59,10 +61,16 @@
         {% endif %}
       </td>
       <td>
+        {{ member.birth_date|default_if_none:"-" }}
+      </td>
+      <td>
         {{ member.age|default_if_none:"-" }}
       </td>
       <td>
         {{ member.alive }}
+      </td>
+      <td>
+        {{ member.death_date|default_if_none:"-" }}
       </td>
       <td>
         {% if member.children.count %}
@@ -71,20 +79,20 @@
           -
         {% endif %}
       </td>
-      <td>
-        {% if member.father_id %}
-            <a href="{% url 'members:details' member.father_id %}" >{{ member.father }}</a>
-        {% else %}
-            -
-        {% endif %}
-      </td>
-      <td>
-        {% if member.mother_id %}
-            <a href="{% url 'members:details' member.mother_id %}" >{{ member.mother }}</a>
-        {% else %}
-            -
-        {% endif %}
-      </td>
+<!--      <td>-->
+<!--        {% if member.father_id %}-->
+<!--            <a href="{% url 'members:details' member.father_id %}" >{{ member.father }}</a>-->
+<!--        {% else %}-->
+<!--            - -->
+<!--        {% endif %}-->
+<!--      </td>-->
+<!--      <td>-->
+<!--        {% if member.mother_id %}-->
+<!--            <a href="{% url 'members:details' member.mother_id %}" >{{ member.mother }}</a>-->
+<!--        {% else %}-->
+<!--            - -->
+<!--        {% endif %}-->
+<!--      </td>-->
     </tr>
     {% empty %}
     <tr>

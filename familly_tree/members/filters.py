@@ -50,11 +50,13 @@ class MemberFilter(django_filters.FilterSet):
         fields = ["name", "sex", "alive", "children_count_range"]
 
     def filter_name(self, queryset, name, value):
-        return queryset.filter(
-            Q(firstname__icontains=value)
-            | Q(lastname__icontains=value)
-            | Q(family_name__icontains=value)
+        cleaned_value = value.title()
+        returned_data = queryset.filter(
+            Q(firstname__icontains=cleaned_value)
+            | Q(lastname__icontains=cleaned_value)
+            | Q(family_name__icontains=cleaned_value)
         )
+        return returned_data
 
     def filter_alive(self, queryset, name, value):
         if value == "true":
@@ -70,7 +72,7 @@ class MemberFilter(django_filters.FilterSet):
             birth_date__isnull=False, birth_date__lte=str(current_date.year - value)
         )
 
-    def filter_age_max(self, queryset, name, value):
+    def filter_age_max(self, queryset, name, value):  # TODO: fix for dead members
         # Filter by maximum age
         current_date = datetime.now().date()
         return queryset.filter(

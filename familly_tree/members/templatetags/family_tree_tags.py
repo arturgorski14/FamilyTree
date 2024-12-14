@@ -2,8 +2,6 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from members.models import Member
-
 register = template.Library()
 
 
