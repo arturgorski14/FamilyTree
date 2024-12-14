@@ -63,14 +63,10 @@ class MemberFilter(django_filters.FilterSet):
             return queryset.filter(death_date__isnull=True)
         elif value == "false":
             return queryset.filter(death_date__isnull=False)
-        return queryset  # Return unchanged for "
+        return queryset
 
     def filter_age_min(self, queryset, name, value):
-        # Filter by minimum age
-        current_date = datetime.now().date()
-        return queryset.filter(
-            birth_date__isnull=False, birth_date__lte=str(current_date.year - value)
-        )
+        return queryset.filter(cached_age__gte=value)
 
     def filter_age_max(self, queryset, name, value):  # TODO: fix for dead members
         # Filter by maximum age

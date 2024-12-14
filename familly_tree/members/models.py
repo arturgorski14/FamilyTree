@@ -35,6 +35,8 @@ class Member(models.Model):
         related_name="children_mother",
     )
 
+    cached_age = models.IntegerField(null=True, blank=True)
+
     def __repr__(self):
         born = f" born {self.birth_date}" if self.birth_date else ""
         died = f" died {self.death_date}" if self.death_date else ""
@@ -58,6 +60,7 @@ class Member(models.Model):
             self.family_name = self.lastname
         else:
             self.family_name = self.family_name.capitalize()
+        self.cached_age = self.age
         super().save(*args, **kwargs)
 
     @property
