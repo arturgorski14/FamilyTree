@@ -25,9 +25,7 @@ class MemberFilter(django_filters.FilterSet):
         method="filter_children_count_range", label="Number of Children Range"
     )
 
-    age_range = django_filters.RangeFilter(
-        method="filter_age_range", label="Age Range"
-    )
+    age_range = django_filters.RangeFilter(method="filter_age_range", label="Age Range")
 
     def filter_children_count_range(self, queryset, name, value):
         queryset = queryset.annotate(

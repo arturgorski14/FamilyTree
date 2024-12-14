@@ -60,22 +60,12 @@ class Member(models.Model):
             self.family_name = self.lastname
         else:
             self.family_name = self.family_name.capitalize()
-        self.cached_age = self.age
+        self.cached_age = self.__calculate_age()
         super().save(*args, **kwargs)
 
     @property
     def age(self) -> int:
-        """
-        Calculate age based on birth_date and death_date.
-        The thicky part is that the age can be (in future versions) in different formats:
-        - yyyy-mm-dd
-        - yyyy-mm
-        - yyyy
-        Should display in years most of the time (but for now just full years will be enough):
-        if member.years < 2 then display in months
-        if member.years < 0 and member.months < 6 display in months with days
-        """
-        return self.__calculate_age()
+        return self.cached_age
 
     @property
     def alive(self) -> str:
@@ -206,7 +196,16 @@ class Member(models.Model):
         return True
 
     def __calculate_age(self) -> Optional[int]:
-        """Calculate age based on birth_date and death_date, if provided."""
+        """
+        Calculate age based on birth_date and death_date.
+        The thicky part is that the age can be (in future versions) in different formats:
+        - yyyy-mm-dd
+        - yyyy-mm
+        - yyyy
+        Should display in years most of the time (but for now just full years will be enough):
+        if member.years < 2 then display in months
+        if member.years < 0 and member.months < 6 display in months with days
+        """
         birth_date = self.__parse_date(str(self.birth_date))
         if not birth_date:
             return None
