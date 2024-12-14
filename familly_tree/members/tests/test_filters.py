@@ -36,22 +36,22 @@ class TestMemberFilter:
             birth_date="2004",
             death_date=None,
         )
-        # member3 = create_and_save_woman(
-        #     firstname="Chistina",
-        #     lastname="Swift",
-        #     family_name="Taylor",
-        #     birth_date=datetime.now().date() - timedelta(days=365 * 20),
-        #     death_date=None,
-        # )
-        # member4 = create_and_save_man(
-        #     firstname="Neil",
-        #     lastname="Swift",
-        #     family_name="Swift",
-        #     birth_date=datetime.now().date() - timedelta(days=365 * 20),
-        #     death_date=None,
-        # )
+        member3 = create_and_save_woman(
+            firstname="Christina",
+            lastname="Swift",
+            family_name="Taylor",
+            birth_date="1950",
+            death_date="2000",
+        )
+        member4 = create_and_save_man(
+            firstname="Neil",
+            lastname="Swift",
+            family_name="Swift",
+            birth_date="1955",
+            death_date="1970",
+        )
         member0.children_father.add(member2)
-        return [member0, member1, member2]
+        return [member0, member1, member2, member3, member4]
 
     def test_filter_name(self, sample_data):
         filter = MemberFilter({"name": "Doe"}, queryset=Member.objects.all())
@@ -65,16 +65,16 @@ class TestMemberFilter:
 
         filter_dead = MemberFilter({"alive": "false"}, queryset=Member.objects.all())
         filtered_dead = filter_dead.qs.order_by("id")
-        assert list(filtered_dead) == [sample_data[1]]
+        assert list(filtered_dead) == [sample_data[1], sample_data[3], sample_data[4]]
 
     def test_filter_sex(self, sample_data):
         filter_male = MemberFilter({"sex": "m"}, queryset=Member.objects.all())
         filtered_male = filter_male.qs.order_by("id")
-        assert list(filtered_male) == [sample_data[0]]
+        assert list(filtered_male) == [sample_data[0], sample_data[4]]
 
         filter_female = MemberFilter({"sex": "f"}, queryset=Member.objects.all())
         filtered_female = filter_female.qs.order_by("id")
-        assert list(filtered_female) == [sample_data[1], sample_data[2]]
+        assert list(filtered_female) == [sample_data[1], sample_data[2], sample_data[3]]
 
     def test_filter_children_count_range(self, sample_data):
         filter_min = MemberFilter(
@@ -87,14 +87,14 @@ class TestMemberFilter:
             {"children_count_range_max": 0}, queryset=Member.objects.all()
         )
         filtered_max = filter_max.qs.order_by("id")
-        assert list(filtered_max) == [sample_data[1], sample_data[2]]
+        assert list(filtered_max) == sample_data[1:]
 
     def test_filter_age_min(self, sample_data):
         filter_min_age = MemberFilter({"age_min": 30}, queryset=Member.objects.all())
         filtered_min_age = filter_min_age.qs.order_by("id")
-        assert list(filtered_min_age) == [sample_data[0], sample_data[1]]
+        assert list(filtered_min_age) == [sample_data[0], sample_data[1], sample_data[3]]
 
     def test_filter_age_max(self, sample_data):
         filter_max_age = MemberFilter({"age_max": 30}, queryset=Member.objects.all())
         filtered_max_age = filter_max_age.qs.order_by("id")
-        assert list(filtered_max_age) == [sample_data[0], sample_data[2]]
+        assert list(filtered_max_age) == [sample_data[0], sample_data[2], sample_data[4]]
