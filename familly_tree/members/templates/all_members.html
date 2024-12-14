@@ -61,14 +61,14 @@
         {% endif %}
       </td>
       <td>
-        {{ member.birth_date|default_if_none:"-" }}
-      </td>
-      <td>
         {{ member.age|default_if_none:"-" }}
       </td>
       <td>
-        {{ member.alive }}
+        {{ member.birth_date|default_if_none:"-" }}
       </td>
+<!--      <td>-->
+<!--        {{ member.alive }}-->
+<!--      </td>-->
       <td>
         {{ member.death_date|default_if_none:"-" }}
       </td>
