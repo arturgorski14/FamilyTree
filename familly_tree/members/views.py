@@ -1,13 +1,18 @@
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.urls import reverse
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from django_filters.views import FilterView
 
 from .filters import MemberFilter
-from .forms import MarryMemberForm, MemberForm
+from .forms import MemberForm
 from .models import MartialRelationship, Member
 
 

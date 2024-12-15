@@ -3,10 +3,13 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from freezegun import freeze_time
 
-from members.models import MartialRelationship, Member, SpouseData
-from members.tests.factories import (MemberFactory, create_and_save_man,
-                                     create_and_save_member,
-                                     create_and_save_woman)
+from members.models import MartialRelationship, Member
+from members.tests.factories import (
+    MemberFactory,
+    create_and_save_man,
+    create_and_save_member,
+    create_and_save_woman,
+)
 
 
 def test_create_default_member(db):

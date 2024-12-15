@@ -1,13 +1,9 @@
-from datetime import datetime, timedelta
-
 import pytest
 from freezegun import freeze_time
 
 from members.filters import MemberFilter
 from members.models import Member
-from members.tests.factories import (create_and_save_man,
-                                     create_and_save_member,
-                                     create_and_save_woman)
+from members.tests.factories import create_and_save_man, create_and_save_woman
 
 
 @pytest.mark.django_db
