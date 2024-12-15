@@ -3,7 +3,6 @@
 
 # HIGH PRIORITY
 ## Order by DESC/ASC by clicking on the table header
-## Search by age using property from Member class
 ## Improve views redability
 ## Redesign styles, template_tags and html in more organized manner
 ## Introduce aunt, uncle, cousins in details.html
