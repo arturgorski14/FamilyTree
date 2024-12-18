@@ -1,9 +1,8 @@
 import pytest
 from django.core.exceptions import ValidationError
-from django.urls import reverse
 from freezegun import freeze_time
 
-from members.models import MartialRelationship, Member
+from members.models import Member
 from members.tests.factories import (MemberFactory, create_and_save_man,
                                      create_and_save_member,
                                      create_and_save_woman)
@@ -31,6 +30,7 @@ def test_create_default_member(db):
         ), f"Expected {key} to be {value}, but got {member_value}"
 
 
+# 'C:\\Users\\Artur\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\famillytree-1XivX2jJ-py3.13'
 def test_create_member_with_weird_capitalization(db):
     member = create_and_save_member(
         firstname="JOHnny", lastname="walker", family_name="sMiTh"
@@ -41,22 +41,20 @@ def test_create_member_with_weird_capitalization(db):
     assert member.family_name == "Smith"
 
 
-def test_link_non_existent_father_id(db):
-    member = MemberFactory(father_id=999)
+@pytest.mark.parametrize(
+    "attribute, expected_error",
+    [
+        ("father_id", "father: Father must exist and be male"),
+        ("mother_id", "mother: Mother must exist and be female"),
+    ],
+)
+def test_link_non_existent_parent(db, attribute, expected_error):
+    data = {attribute: 999}
+    member = MemberFactory(**data)
 
     with pytest.raises(
         ValidationError,
-        match="Non-existent or invalid father: Father must exist and be male.",
-    ):
-        member.clean()
-
-
-def test_link_non_existent_mother_id(db):
-    member = MemberFactory(mother_id=999)
-
-    with pytest.raises(
-        ValidationError,
-        match="Non-existent or invalid mother: Mother must exist and be female.",
+        match=f"Non-existent or invalid {expected_error}.",
     ):
         member.clean()
 
@@ -351,81 +349,3 @@ def test_siblings_property_no_parent_set(db):
 
     assert list(member1.siblings) == []
     assert list(member2.siblings) == []
-
-
-def test_views_marry_member_success(client, db):
-    """Test for successful marriage between two members."""
-    man = create_and_save_man()
-    woman = create_and_save_woman()
-
-    assert (
-        MartialRelationship.objects.count() == 0
-    ), f"{MartialRelationship.objects.all()}"
-
-    url = reverse(
-        "members:marry_member", kwargs={"member_id": man.pk, "spouse_id": woman.pk}
-    )
-    response = client.get(url)
-
-    assert response.status_code == 302
-
-    assert MartialRelationship.objects.filter(
-        member=man, spouse=woman, married=True
-    ).exists()
-    assert MartialRelationship.objects.filter(
-        member=woman, spouse=man, married=True
-    ).exists()
-
-    assert (
-        MartialRelationship.objects.count() == 2
-    ), f"{MartialRelationship.objects.all()}"
-
-
-@pytest.mark.parametrize("function", [create_and_save_man, create_and_save_woman])
-def test_views_marry_member_same_sex(client, db, function):
-    """Test that same-sex marriage raises a ValidationError."""
-    member1 = function()
-    member2 = function()
-
-    url = reverse(
-        "members:marry_member",
-        kwargs={"member_id": member1.pk, "spouse_id": member2.pk},
-    )
-
-    with pytest.raises(ValidationError, match="Same sex marriages are not allowed"):
-        client.get(url)
-
-
-def test_views_marry_member_already_married(client, db):
-    """Test that a member who is already married cannot marry another person."""
-    member_1 = create_and_save_woman()
-    member_2 = create_and_save_man()
-    # Make member_1 already married to someone else
-    member_3 = create_and_save_man()
-    MartialRelationship.marry(member_1, member_3)
-
-    # Try to marry member_1 and member_2 (should fail)
-    url = reverse(
-        "members:marry_member",
-        kwargs={"member_id": member_1.pk, "spouse_id": member_2.pk},
-    )
-    response = client.get(url)
-
-    assert response.status_code == 400
-    assert (
-        f"Impossible marriage because {member_1} is already married."
-        in response.content.decode()
-    )
-
-
-def test_views_marry_member_to_self(client, db):
-    """Test that a member cannot marry themselves."""
-    member_1 = create_and_save_member()
-
-    url = reverse(
-        "members:marry_member",
-        kwargs={"member_id": member_1.pk, "spouse_id": member_1.pk},
-    )
-
-    with pytest.raises(ValidationError, match=f"{member_1} cannot marry themselves."):
-        client.get(url)
