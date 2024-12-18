@@ -103,7 +103,7 @@ def test_member_cannot_be_own_father(db):
 
 def test_member_cannot_be_own_mother(db):
     member = MemberFactory()
-    member.save()  # if save() not performed then id=None
+    member.save()
     member.mother_id = member.pk
     with pytest.raises(ValidationError, match="A member cannot be their own mother."):
         member.save()
@@ -367,10 +367,8 @@ def test_views_marry_member_success(client, db):
     )
     response = client.get(url)
 
-    # Check the response status is 302 (redirect)
     assert response.status_code == 302
 
-    # Check that a marriage relationship was created
     assert MartialRelationship.objects.filter(
         member=man, spouse=woman, married=True
     ).exists()
@@ -413,7 +411,6 @@ def test_views_marry_member_already_married(client, db):
     )
     response = client.get(url)
 
-    # Check for validation error in the response
     assert response.status_code == 400
     assert (
         f"Impossible marriage because {member_1} is already married."
@@ -432,5 +429,3 @@ def test_views_marry_member_to_self(client, db):
 
     with pytest.raises(ValidationError, match=f"{member_1} cannot marry themselves."):
         client.get(url)
-
-    # Check for validation error in the response
