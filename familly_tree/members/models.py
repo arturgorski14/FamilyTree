@@ -109,6 +109,12 @@ class Member(models.Model):
         else:
             return None
 
+    @classmethod
+    def save_all_members(cls):
+        """Method to use in shell to update Members"""
+        for member in cls.objects.all():
+            member.save()
+
     def _validate_dates(self) -> None:
         if self.birth_date:
             try:
@@ -116,7 +122,6 @@ class Member(models.Model):
             except ValueError:
                 raise ValidationError(
                     "birth_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
-                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
                 )
             if self._is_birthday_before_today():
                 raise ValidationError("Birth date must be before today.")
@@ -126,7 +131,6 @@ class Member(models.Model):
             except ValueError:
                 raise ValidationError(
                     "death_date must be in YYYY, YYYY-MM, or YYYY-MM-DD format."
-                    # Date must be in 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' format and represent a valid date.
                 )
 
         self.__is_birthdate_before_death_date()

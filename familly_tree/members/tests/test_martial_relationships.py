@@ -2,11 +2,9 @@ import pytest
 from django.core.exceptions import ValidationError
 
 from members.models import MartialRelationship, SpouseData
-from members.tests.factories import (
-    create_and_save_man,
-    create_and_save_member,
-    create_and_save_woman,
-)
+from members.tests.factories import (create_and_save_man,
+                                     create_and_save_member,
+                                     create_and_save_woman)
 
 
 def test_marriage(db):

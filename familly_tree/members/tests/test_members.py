@@ -4,12 +4,9 @@ from django.urls import reverse
 from freezegun import freeze_time
 
 from members.models import MartialRelationship, Member
-from members.tests.factories import (
-    MemberFactory,
-    create_and_save_man,
-    create_and_save_member,
-    create_and_save_woman,
-)
+from members.tests.factories import (MemberFactory, create_and_save_man,
+                                     create_and_save_member,
+                                     create_and_save_woman)
 
 
 def test_create_default_member(db):
@@ -356,8 +353,7 @@ def test_siblings_property_no_parent_set(db):
     assert list(member2.siblings) == []
 
 
-@pytest.mark.django_db
-def test_views_marry_member_success(client):
+def test_views_marry_member_success(client, db):
     """Test for successful marriage between two members."""
     man = create_and_save_man()
     woman = create_and_save_woman()
@@ -387,26 +383,22 @@ def test_views_marry_member_success(client):
     ), f"{MartialRelationship.objects.all()}"
 
 
-@pytest.mark.django_db
-def test_views_marry_member_same_sex(client):
+@pytest.mark.parametrize("function", [create_and_save_man, create_and_save_woman])
+def test_views_marry_member_same_sex(client, db, function):
     """Test that same-sex marriage raises a ValidationError."""
-    man = create_and_save_man()
-    woman = create_and_save_woman()
+    member1 = function()
+    member2 = function()
 
     url = reverse(
-        "members:marry_member", kwargs={"member_id": man.pk, "spouse_id": woman.pk}
+        "members:marry_member",
+        kwargs={"member_id": member1.pk, "spouse_id": member2.pk},
     )
-    response = client.get(url)
 
-    # Check for validation error in the response
-    assert (
-        response.status_code == 400
-    )  # Assuming you handle validation errors with a 400 response
-    assert "Same sex marriages are not allowed" in response.content.decode()
+    with pytest.raises(ValidationError, match="Same sex marriages are not allowed"):
+        client.get(url)
 
 
-@pytest.mark.django_db
-def test_views_marry_member_already_married(client):
+def test_views_marry_member_already_married(client, db):
     """Test that a member who is already married cannot marry another person."""
     member_1 = create_and_save_woman()
     member_2 = create_and_save_man()
@@ -429,8 +421,7 @@ def test_views_marry_member_already_married(client):
     )
 
 
-@pytest.mark.django_db
-def test_views_marry_member_to_self(client):
+def test_views_marry_member_to_self(client, db):
     """Test that a member cannot marry themselves."""
     member_1 = create_and_save_member()
 
@@ -438,8 +429,8 @@ def test_views_marry_member_to_self(client):
         "members:marry_member",
         kwargs={"member_id": member_1.pk, "spouse_id": member_1.pk},
     )
-    response = client.get(url)
+
+    with pytest.raises(ValidationError, match=f"{member_1} cannot marry themselves."):
+        client.get(url)
 
     # Check for validation error in the response
-    assert response.status_code == 400
-    assert f"{member_1} cannot marry themselves." in response.content.decode()

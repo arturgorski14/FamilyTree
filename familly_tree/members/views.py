@@ -2,13 +2,8 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 from django_filters.views import FilterView
 
 from .filters import MemberFilter
@@ -77,9 +72,20 @@ class ChooseChildView(ListView):
     context_object_name = "members"
 
     def get_queryset(self):
-        # Exclude the current member from the list to prevent them from being selected as their own child
         parent_id = self.kwargs["parent_id"]
-        return Member.objects.exclude(id=parent_id)
+        parent = get_object_or_404(Member, id=parent_id)
+
+        # Filter out the parent (itself) and members born before itself
+        queryset = Member.objects.exclude(id=parent_id)
+
+        if parent.birth_date:
+            queryset = queryset.filter(
+                Q(birth_date__isnull=True) | Q(birth_date__gt=parent.birth_date)
+            )
+        else:
+            queryset = queryset
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
